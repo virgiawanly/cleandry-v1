@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
@@ -16,10 +17,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [PageController::class, 'dashboard'])->name('pages.dashboard');
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'login'])->name('login');
+    Route::post('/login', [AuthController::class, 'authenticate']);
+});
 
-Route::get('/outlets/datatable', [OutletController::class, 'datatable'])->name('outlets.datatable');
-Route::apiResource('/outlets', OutletController::class);
+Route::middleware('auth')->group(function () {
+    Route::get('/', [PageController::class, 'dashboard'])->name('pages.dashboard');
 
-Route::get('/users/datatable', [UserController::class, 'datatable'])->name('users.datatable');
-Route::apiResource('/users', UserController::class);
+    Route::get('/outlets/datatable', [OutletController::class, 'datatable'])->name('outlets.datatable');
+    Route::apiResource('/outlets', OutletController::class);
+
+    Route::get('/users/datatable', [UserController::class, 'datatable'])->name('users.datatable');
+    Route::apiResource('/users', UserController::class);
+});
