@@ -48,7 +48,7 @@ class ServiceController extends Controller
                     <i class="fas fa-edit"></i>
                     <span>Edit layanan</span>
                 </button>';
-                $deletBtn = '<button class="btn btn-danger mx-1">
+                $deletBtn = '<button onclick="deleteHandler(' . "'" . route('services.destroy', $service->id) . "'" . ')" class="btn btn-danger mx-1">
                     <i class="fas fa-trash"></i>
                     <span>Hapus layanan</span>
                 </button>';
@@ -140,6 +140,14 @@ class ServiceController extends Controller
      */
     public function destroy(Service $service)
     {
-        //
+        if ($service->delete()) {
+            return response()->json([
+                'message' => 'Layanan berhasil dihapus'
+            ], Response::HTTP_OK);
+        };
+
+        return response()->json([
+            'message' => 'Terjadi kesalahan'
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
