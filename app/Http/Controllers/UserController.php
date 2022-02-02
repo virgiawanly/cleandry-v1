@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Outlet;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
@@ -16,6 +17,8 @@ class UserController extends Controller
      */
     public function index()
     {
+        $outlets = Outlet::all();
+
         return view('users.index', [
             'title' => 'Kelola Users',
             'breadcrumbs' => [
@@ -24,6 +27,7 @@ class UserController extends Controller
                     'label' => 'Users'
                 ]
             ],
+            'outlets' => $outlets
         ]);
     }
 
@@ -49,5 +53,40 @@ class UserController extends Controller
                 </button>';
                 return $editBtn . $deleteBtn;
             })->rawColumns(['actions'])->make(true);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'max:16|unique:users,phone',
+            'password' => 'required|min:5|confirmed',
+            'password_confirmation' => 'required',
+            'role' => 'required|in:admin,owner,cashier',
+            'outlet_id' => 'required|exists:outlets,id',
+        ]);
+
+        $payload = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'role' => $request->role,
+            'password' => bcrypt($request->password),
+            'outlet_id' => $request->outlet_id,
+        ];
+
+        User::create($payload);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Registrasi user berhasil'
+        ], Response::HTTP_OK);
     }
 }
