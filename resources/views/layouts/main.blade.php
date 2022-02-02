@@ -96,6 +96,21 @@
         const clearErrors = function() {
             $('span.form-errors').remove();
         }
+
+        const logoutHandler = function() {
+            Swal.fire({
+                title: 'Logout?',
+                text: 'Anda yakin ingin logout?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#6C757D',
+                cancelButtonColor: '#4DA3B8',
+                confirmButtonText: 'Logout',
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+                $('#logoutForm').submit();
+            });
+        }
     </script>
     <!-- Page Scripts -->
     @stack('script')

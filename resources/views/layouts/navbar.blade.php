@@ -28,7 +28,7 @@
                 </a>
                 <form id="logoutForm" action="/logout" method="POST" class="d-inline">
                     @csrf
-                    <button class="dropdown-item">
+                    <button type="button" class="dropdown-item" onclick="logoutHandler()">
                         <i class="fas fa-sign-out-alt mr-2"></i> Logout
                     </button>
                 </form>
