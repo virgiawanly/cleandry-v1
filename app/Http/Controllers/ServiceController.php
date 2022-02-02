@@ -43,8 +43,8 @@ class ServiceController extends Controller
 
         return DataTables::of($services)
             ->addIndexColumn()
-            ->addColumn('actions', function() {
-                $editBtn = '<button class="btn btn-info mx-1">
+            ->addColumn('actions', function($service) {
+                $editBtn = '<button onclick="editHandler(' . "'" . route('services.update', $service->id) . "'" . ')" class="btn btn-info mx-1">
                     <i class="fas fa-edit"></i>
                     <span>Edit layanan</span>
                 </button>';
@@ -94,7 +94,11 @@ class ServiceController extends Controller
      */
     public function show(Service $service)
     {
-        //
+        return response()->json([
+            'success' => true,
+            'message' => 'Data layanan',
+            'service' => $service
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -106,7 +110,26 @@ class ServiceController extends Controller
      */
     public function update(Request $request, Service $service)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'price' => 'required',
+            'type_id' => 'required|exists:service_types,id',
+            'unit' => 'required|in:m,kg,pcs',
+        ]);
+
+        $payload = [
+            'name' => $request->name,
+            'price' => $request->price,
+            'type_id' => $request->type_id,
+            'unit' => $request->unit,
+        ];
+
+        $service->update($payload);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Layanan berhasil ditambahkan'
+        ], Response::HTTP_OK);
     }
 
     /**

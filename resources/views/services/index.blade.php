@@ -172,6 +172,39 @@
             });
         }
 
+        const editHandler = (url) => {
+            clearErrors();
+            const modal = $('#formModal');
+            modal.modal('show');
+            modal.find('.modal-title').text('Edit layanan');
+            modal.find('form')[0].reset();
+            modal.find('form').attr('action', url);
+            modal.find('[name=_method]').val('put');
+            modal.find('input').attr('disabled', true);
+            modal.find('select').attr('disabled', true);
+            modal.on('shown.bs.modal', function() {
+                modal.find('[name=name]').focus();
+            });
+
+            $.get(url)
+                .done((res) => {
+                    const service = res.service;
+                    modal.find('[name=name]').val(service.name);
+                    modal.find('[name=price]').val(service.price);
+                    modal.find(`[name=type_id]`).val(service.type_id).trigger('change');
+                    modal.find(`[name=unit][value='${service.unit}']`).prop('checked', true);
+                })
+                .fail((err) => {
+                    toaster.fire({
+                        icon: 'error',
+                        title: 'Tidak dapat mengambil data'
+                    });
+                }).always(() => {
+                    modal.find('input').attr('disabled', false);
+                    modal.find('select').attr('disabled', false);
+                });
+        }
+
         const submitHandler = function() {
             event.preventDefault();
             const url = $('#formModal form').attr('action');
