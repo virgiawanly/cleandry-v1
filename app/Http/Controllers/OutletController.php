@@ -38,8 +38,8 @@ class OutletController extends Controller
 
         return DataTables::of($outlets)
             ->addIndexColumn()
-            ->addColumn('actions', function () {
-                $editBtn = '<button class="btn btn-warning mx-1 mb-1">
+            ->addColumn('actions', function ($outlet) {
+                $editBtn = '<button onclick="editHandler(' . "'" . route('outlets.update', $outlet->id) . "'" . ')" class="btn btn-warning mx-1 mb-1">
                     <i class="fas fa-edit mr-1"></i>
                     <span>Edit outlet</span>
                 </button>';
@@ -87,7 +87,11 @@ class OutletController extends Controller
      */
     public function show(Outlet $outlet)
     {
-        //
+        return response()->json([
+            'success' => true,
+            'message' => 'Data outlet',
+            'outlet' => $outlet
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -99,7 +103,22 @@ class OutletController extends Controller
      */
     public function update(Request $request, Outlet $outlet)
     {
-        //
+        $request->validate([
+            'name' => 'required|string',
+            'phone' => 'required|max:16',
+            'address' => 'required'
+        ]);
+
+        $outlet->update([
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'address' => $request->address,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Outlet berhasil diupdate'
+        ], Response::HTTP_OK);
     }
 
     /**

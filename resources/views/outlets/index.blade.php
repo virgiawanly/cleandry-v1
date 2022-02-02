@@ -130,6 +130,38 @@
             });
         }
 
+        const editHandler = (url) => {
+            clearErrors();
+            const modal = $('#formModal');
+            modal.modal('show');
+            modal.find('.modal-title').text('Edit outlet');
+            modal.find('form')[0].reset();
+            modal.find('form').attr('action', url);
+            modal.find('[name=_method]').val('put');
+            modal.find('input').attr('disabled', true);
+            modal.find('select').attr('disabled', true);
+            modal.on('shown.bs.modal', function() {
+                modal.find('[name=name]').focus();
+            });
+
+            $.get(url)
+                .done((res) => {
+                    const outlet = res.outlet;
+                    modal.find('[name=name]').val(outlet.name);
+                    modal.find('[name=phone]').val(outlet.phone);
+                    modal.find('[name=address]').val(outlet.address);
+                })
+                .fail((err) => {
+                    toaster.fire({
+                        icon: 'error',
+                        title: 'Tidak dapat mengambil data'
+                    });
+                }).always(() => {
+                    modal.find('input').attr('disabled', false);
+                    modal.find('select').attr('disabled', false);
+                });
+        }
+
         const submitHandler = function() {
             event.preventDefault();
             const url = $('#formModal form').attr('action');
