@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,3 +16,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [PageController::class, 'dashboard'])->name('pages.dashboard');
+
+Route::get('/outlets/datatable', [OutletController::class, 'datatable'])->name('outlets.datatable');
+Route::apiResource('/outlets', OutletController::class);
