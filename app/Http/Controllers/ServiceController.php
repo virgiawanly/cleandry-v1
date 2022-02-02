@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Service;
-use App\Models\User;
+use App\Models\ServiceType;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
@@ -17,6 +18,8 @@ class ServiceController extends Controller
      */
     public function index()
     {
+        $types = ServiceType::all();
+
         return view('services.index', [
             'title' => 'Kelola Layanan',
             'breadcrumbs' => [
@@ -25,6 +28,7 @@ class ServiceController extends Controller
                     'label' => 'Layanan'
                 ]
             ],
+            'types' => $types
         ]);
     }
 
@@ -60,7 +64,26 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'price' => 'required',
+            'type_id' => 'required|exists:service_types,id',
+            'unit' => 'required|in:m,kg,pcs',
+        ]);
+
+        $payload = [
+            'name' => $request->name,
+            'price' => $request->price,
+            'type_id' => $request->type_id,
+            'unit' => $request->unit,
+        ];
+
+        Auth::user()->outlet->services()->create($payload);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Layanan berhasil ditambahkan'
+        ], Response::HTTP_OK);
     }
 
     /**
