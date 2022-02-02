@@ -47,7 +47,7 @@ class UserController extends Controller
                     <i class="fas fa-edit mr-1"></i>
                     <span>Edit user</span>
                 </button>';
-                $deleteBtn = '<button class="btn btn-danger mx-1 mb-1">
+                $deleteBtn = '<button onclick="deleteHandler(' . "'" . route('users.destroy', $user->id) . "'" . ')" class="btn btn-danger mx-1 mb-1">
                     <i class="fas fa-trash mr-1"></i>
                     <span>Hapus user</span>
                 </button>';
@@ -144,5 +144,24 @@ class UserController extends Controller
             'success' => true,
             'message' => 'User berhasil diupdate'
         ], Response::HTTP_OK);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(User $user)
+    {
+        if ($user->delete()) {
+            return response()->json([
+                'message' => 'User berhasil dihapus'
+            ], Response::HTTP_OK);
+        };
+
+        return response()->json([
+            'message' => 'Terjadi kesalahan'
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
