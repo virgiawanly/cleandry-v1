@@ -82,7 +82,7 @@
                         <div class="form-group">
                             <label for="outletId">Outlet</label>
                             <select name="outlet_id" class="form-control select2" id="outletId">
-                                <option value="" selected></option>
+                                <option value=""></option>
                                 @foreach ($outlets as $outlet)
                                     <option value="{{ $outlet->id }}">{{ $outlet->name }}</option>
                                 @endforeach
@@ -188,6 +188,40 @@
             modal.on('shown.bs.modal', function() {
                 modal.find('[name=name]').focus();
             });
+        }
+
+        const editHandler = (url) => {
+            clearErrors();
+            const modal = $('#formModal');
+            modal.modal('show');
+            modal.find('.modal-title').text('Edit User');
+            modal.find('form')[0].reset();
+            modal.find('form').attr('action', url);
+            modal.find('[name=_method]').val('put');
+            modal.find('input').attr('disabled', true);
+            modal.find('select').attr('disabled', true);
+            modal.on('shown.bs.modal', function() {
+                modal.find('[name=name]').focus();
+            });
+
+            $.get(url)
+                .done((res) => {
+                    const user = res.user;
+                    modal.find('[name=name]').val(user.name);
+                    modal.find('[name=phone]').val(user.phone);
+                    modal.find('[name=email]').val(user.email);
+                    modal.find(`[name=outlet_id]`).val(user.outlet_id).trigger('change');
+                    modal.find(`[name=role][value='${user.role}']`).prop('checked', true);
+                })
+                .fail((err) => {
+                    toaster.fire({
+                        icon: 'error',
+                        title: 'Tidak dapat mengambil data'
+                    });
+                }).always(() => {
+                    modal.find('input').attr('disabled', false);
+                    modal.find('select').attr('disabled', false);
+                });
         }
 
         const submitHandler = function() {

@@ -42,8 +42,8 @@ class UserController extends Controller
 
         return DataTables::of($users)
             ->addIndexColumn()
-            ->addColumn('actions', function () {
-                $editBtn = '<button class="btn btn-warning mx-1 mb-1">
+            ->addColumn('actions', function ($user) {
+                $editBtn = '<button onclick="editHandler(' . "'" . route('users.update', $user->id) . "'" . ')" class="btn btn-warning mx-1 mb-1">
                     <i class="fas fa-edit mr-1"></i>
                     <span>Edit user</span>
                 </button>';
@@ -87,6 +87,62 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Registrasi user berhasil'
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function show(User $user)
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'Data user',
+            'user' => $user
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, User $user)
+    {
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'phone' => 'max:16|unique:users,phone,' . $user->id,
+            'role' => 'required|in:admin,owner,cashier',
+            'outlet_id' => 'required|exists:outlets,id',
+        ]);
+
+        $payload = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'role' => $request->role,
+            'outlet_id' => $request->outlet_id,
+        ];
+
+        if ($request->has('password') && $request->password != '') {
+            $request->validate([
+                'password' => 'required|min:5|confirmed',
+                'password_confirmation' => 'required',
+            ]);
+            $payload['password'] = bcrypt($request->password);
+        }
+
+        $user->update($payload);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User berhasil diupdate'
         ], Response::HTTP_OK);
     }
 }
