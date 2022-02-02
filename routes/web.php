@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,4 +33,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/users/datatable', [UserController::class, 'datatable'])->name('users.datatable');
     Route::apiResource('/users', UserController::class);
+
+    Route::get('/services/datatable', [ServiceController::class, 'datatable'])->name('services.datatable');
+    Route::apiResource('/services', ServiceController::class);
 });

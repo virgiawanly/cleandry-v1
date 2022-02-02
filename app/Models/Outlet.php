@@ -19,4 +19,14 @@ class Outlet extends Model
         'phone',
         'address',
     ];
+
+    /**
+     * Return services belongs to this outlet
+     *
+     * @return \App\Models\Outlet
+     */
+    public function services()
+    {
+        return $this->hasMany(Service::class);
+    }
 }
