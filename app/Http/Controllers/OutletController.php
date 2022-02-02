@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Outlet;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Yajra\DataTables\DataTables;
 
 class OutletController extends Controller
@@ -58,7 +59,24 @@ class OutletController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string',
+            'phone' => 'required|max:16',
+            'address' => 'required'
+        ]);
+
+        $payload = [
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'address' => $request->address,
+        ];
+
+        Outlet::create($payload);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Outlet berhasil dibuat'
+        ], Response::HTTP_OK);
     }
 
     /**
