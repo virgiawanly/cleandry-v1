@@ -213,5 +213,35 @@
                     });
                 });
         }
+
+        const deleteHandler = function(url) {
+            Swal.fire({
+                title: 'Hapus Member',
+                text: 'Anda yakin ingin menghapus member ini?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#6C757D',
+                cancelButtonColor: '#037AFC',
+                confirmButtonText: 'Hapus',
+                cancelButtonText: 'Batal',
+            }).then((result) => {
+                if (!result.isConfirmed) return;
+                return $.post(url, {
+                    '_token': $('[name=_token]').val(),
+                    '_method': 'delete'
+                }).then((res) => {
+                    table.ajax.reload();
+                    toaster.fire({
+                        icon: 'success',
+                        title: res.message
+                    });
+                }).catch((err) => {
+                    toaster.fire({
+                        icon: 'error',
+                        title: err.responseJSON.message ?? 'Error'
+                    });
+                });
+            });
+        }
     </script>
 @endpush
