@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ServiceController;
@@ -36,4 +37,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/services/datatable', [ServiceController::class, 'datatable'])->name('services.datatable');
     Route::apiResource('/services', ServiceController::class);
+
+    Route::get('/members/datatable', [MemberController::class, 'datatable'])->name('members.datatable');
+    Route::apiResource('/members', MemberController::class);
 });

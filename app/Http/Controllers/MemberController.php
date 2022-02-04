@@ -1,0 +1,98 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Member;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\DataTables;
+
+class MemberController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        return view('members.index', [
+            'title' => 'Kelola Member',
+            'breadcrumbs' => [
+                [
+                    'href' => '/members',
+                    'label' => 'Member'
+                ]
+            ],
+        ]);
+    }
+
+    /**
+     * Return data for DataTables.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function datatable()
+    {
+        $members = Member::where('outlet_id', Auth::user()->outlet_id)->get();
+
+        return DataTables::of($members)
+            ->addIndexColumn()
+            ->addColumn('actions', function () {
+                $editBtn = '<button class="btn btn-warning mx-1 mb-1">
+                    <i class="fas fa-edit mr-1"></i>
+                    <span>Edit member</span>
+                </button>';
+                $deleteBtn = '<button class="btn btn-danger mx-1 mb-1">
+                    <i class="fas fa-trash mr-1"></i>
+                    <span>Hapus member</span>
+                </button>';
+                return $editBtn . $deleteBtn;
+            })->rawColumns(['actions'])->make(true);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Member  $member
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Member $member)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Member  $member
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Member $member)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Member  $member
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Member $member)
+    {
+        //
+    }
+}
