@@ -39,8 +39,8 @@ class MemberController extends Controller
 
         return DataTables::of($members)
             ->addIndexColumn()
-            ->addColumn('actions', function () {
-                $editBtn = '<button class="btn btn-warning mx-1 mb-1">
+            ->addColumn('actions', function ($member) {
+                $editBtn = '<button onclick="editHandler(' . "'" . route('members.update', $member->id) . "'" . ')" class="btn btn-warning mx-1 mb-1">
                     <i class="fas fa-edit mr-1"></i>
                     <span>Edit member</span>
                 </button>';
@@ -62,8 +62,8 @@ class MemberController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'phone' => 'required|max:16|unique:users,phone',
-            'email' => 'email|unique:users,email',
+            'phone' => 'required|max:16|unique:members,phone',
+            'email' => 'email|unique:members,email',
             'gender' => 'required|in:M,F',
             'address' => 'required',
         ]);
@@ -92,7 +92,11 @@ class MemberController extends Controller
      */
     public function show(Member $member)
     {
-        //
+        return response()->json([
+            'success' => true,
+            'message' => 'Data member',
+            'member' => $member
+        ], Response::HTTP_OK);
     }
 
     /**
@@ -104,7 +108,28 @@ class MemberController extends Controller
      */
     public function update(Request $request, Member $member)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'phone' => 'required|max:16|unique:members,phone,' . $member->id,
+            'email' => 'email|unique:members,email,' . $member->id,
+            'gender' => 'required|in:M,F',
+            'address' => 'required',
+        ]);
+
+        $payload = [
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'email' => $request->email,
+            'gender' => $request->gender,
+            'address' => $request->address,
+        ];
+
+        $member->update($payload);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Member berhasil diupdate'
+        ], Response::HTTP_OK);
     }
 
     /**

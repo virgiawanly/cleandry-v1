@@ -41,7 +41,6 @@
     </div>
 @endsection
 
-
 @push('bottom')
     <div class="modal fade" role="dialog" id="formModal">
         <div class="modal-dialog modal-lg" role="document">
@@ -159,6 +158,39 @@
             modal.on('shown.bs.modal', function() {
                 modal.find('[name=name]').focus();
             });
+        }
+
+        const editHandler = (url) => {
+            clearErrors();
+            const modal = $('#formModal');
+            modal.modal('show');
+            modal.find('.modal-title').text('Edit member');
+            modal.find('form')[0].reset();
+            modal.find('form').attr('action', url);
+            modal.find('[name=_method]').val('put');
+            modal.find('input').attr('disabled', true);
+            modal.on('shown.bs.modal', function() {
+                modal.find('[name=name]').focus();
+            });
+
+            $.get(url)
+                .done((res) => {
+                    const member = res.member;
+                    modal.find('[name=name]').val(member.name);
+                    modal.find('[name=phone]').val(member.phone);
+                    modal.find('[name=email]').val(member.email);
+                    modal.find('[name=address]').val(member.address);
+                    modal.find(`[name=gender][value='${member.gender}']`).prop('checked', true);
+                })
+                .fail((err) => {
+                    toaster.fire({
+                        icon: 'error',
+                        title: 'Tidak dapat mengambil data'
+                    });
+                }).always(() => {
+                    modal.find('input').attr('disabled', false);
+                    modal.find('select').attr('disabled', false);
+                });
         }
 
         const submitHandler = function() {
