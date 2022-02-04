@@ -94,6 +94,7 @@ class ServiceController extends Controller
      */
     public function show(Service $service)
     {
+        $service->load(['type']);
         return response()->json([
             'success' => true,
             'message' => 'Data layanan',

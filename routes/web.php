@@ -5,6 +5,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,4 +41,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/members/datatable', [MemberController::class, 'datatable'])->name('members.datatable');
     Route::apiResource('/members', MemberController::class);
+
+    Route::get('/transactions/new-transaction', [TransactionController::class, 'newTransaction']);
 });
