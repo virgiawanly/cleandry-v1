@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Member;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
@@ -59,7 +60,28 @@ class MemberController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'phone' => 'required|max:16|unique:users,phone',
+            'email' => 'email|unique:users,email',
+            'gender' => 'required|in:M,F',
+            'address' => 'required',
+        ]);
+
+        $payload = [
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'email' => $request->email,
+            'gender' => $request->gender,
+            'address' => $request->address,
+        ];
+
+        Auth::user()->outlet->members()->create($payload);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Registrasi member berhasil'
+        ], Response::HTTP_OK);
     }
 
     /**

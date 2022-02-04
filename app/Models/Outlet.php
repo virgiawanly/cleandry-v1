@@ -29,4 +29,14 @@ class Outlet extends Model
     {
         return $this->hasMany(Service::class);
     }
+
+    /**
+     * Return members belongs to this outlet
+     *
+     * @return \App\Models\Outlet
+     */
+    public function members()
+    {
+        return $this->hasMany(Member::class);
+    }
 }
