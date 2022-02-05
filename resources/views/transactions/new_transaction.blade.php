@@ -58,7 +58,7 @@
         </div>
     </form>
 
-    <form action="/transactions" id="transactionForm" method="POST">
+    <form action="/transactions" id="transactionForm" onsubmit="submitHandler()" method="POST">
         @csrf
         <div class="card">
             <div class="card-body">
@@ -91,7 +91,7 @@
                 <!-- row -->
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group">
+                        <div class="form-group mb-4">
                             <label>Pelanggan</label>
                             <div class="input-group" style="gap: 5px">
                                 <input type="text" class="form-control" placeholder="Cari pelanggan" disabled>
@@ -104,11 +104,19 @@
                             <input type="hidden" name="member_id" value="">
                             @include('transactions.member_info_table')
                         </div>
+                        <div style="font-family: consolas">
+                            <div class="bg-secondary px-4 py-2">
+                                <b class="mb-0">TOTAL</b>
+                            </div>
+                            <div class="bg-dark p-4">
+                                <p class="h1 display-total-payment">Rp0</p>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Tanggal Transaksi</label>
-                            <input type="date" class="form-control" value="{{ date('Y-m-d') }}" name="tgl">
+                            <input type="date" class="form-control" value="{{ date('Y-m-d') }}" name="date">
                         </div>
                         <div class="form-group">
                             <label>Deadline</label>
@@ -116,15 +124,17 @@
                         </div>
                         <div class="form-group">
                             <label>Biaya Tambahan</label>
-                            <input type="number" class="form-control" placeholder="Rp0,-" name="biaya_tambahan" value="0">
+                            <input type="number" class="form-control" placeholder="Rp0,-"
+                                onkeydown="updateTotalPayment()" name="additional_cost" value="0">
                         </div>
                         <div class="row">
                             <div class="form-group col-sm-8">
                                 <label>Diskon</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" placeholder="0" name="diskon">
-                                    <select class="form-control" name="jenis_diskon">
-                                        <option value="persen">Persen (%)</option>
+                                    <input type="number" class="form-control" placeholder="0"
+                                        onkeydown="updateTotalPayment()" name="discount" value="0">
+                                    <select class="form-control" name="discount_type" onchange="updateTotalPayment()">
+                                        <option value="percent">Persen (%)</option>
                                         <option value="nominal">Nominal (Rp)</option>
                                     </select>
                                 </div>
@@ -132,7 +142,8 @@
                             <div class="form-group col-sm-4">
                                 <label>Pajak</label>
                                 <div class="input-group">
-                                    <input type="number" class="form-control" name="pajak" placeholder="0" value="0">
+                                    <input type="number" class="form-control" name="tax" onkeydown="updateTotalPayment()"
+                                        placeholder="0" value="0">
                                     <div class="input-group-append">
                                         <span class="input-group-text">%</span>
                                     </div>
@@ -143,15 +154,15 @@
                             <label>Status Pembayaran</label>
                             <div class="d-flex align-items-center" style="gap: 15px">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="status_pembayaran" id="lunas"
-                                        value="dibayar" checked>
+                                    <input class="form-check-input" type="radio" name="payment_status" id="lunas"
+                                        value="paid" checked>
                                     <label class="form-check-label" for="lunas">
                                         Lunas
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="status_pembayaran" id="belumLunas"
-                                        value="belum_dibayar">
+                                    <input class="form-check-input" type="radio" name="payment_status" id="belumLunas"
+                                        value="unpaid">
                                     <label class="form-check-label" for="belumLunas">
                                         Belum Lunas
                                     </label>

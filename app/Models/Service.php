@@ -26,7 +26,7 @@ class Service extends Model
     /**
      * Return service type collection
      *
-     * @return \App\Models\Outlet
+     * @return \App\Models\ServiceType
      */
     public function type()
     {

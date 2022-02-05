@@ -43,4 +43,5 @@ Route::middleware('auth')->group(function () {
     Route::apiResource('/members', MemberController::class);
 
     Route::get('/transactions/new-transaction', [TransactionController::class, 'newTransaction']);
+    Route::post('/transactions', [TransactionController::class, 'store']);
 });
