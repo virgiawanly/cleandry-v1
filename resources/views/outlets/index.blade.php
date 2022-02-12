@@ -1,9 +1,7 @@
 @extends('layouts.main')
 
 @push('head')
-    <!-- DataTables -->
-    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    @include('layouts.datatable_styles')
 @endpush
 
 @section('content')
@@ -19,7 +17,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <table id="outletTable" class="table table-hover table-striped">
+                    <table id="outlets-table" class="table table-hover table-striped">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -40,7 +38,7 @@
 @endsection
 
 @push('bottom')
-    <div class="modal fade" role="dialog" id="formModal">
+    <div class="modal fade" role="dialog" id="form-modal">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <form action="#" onsubmit="submitHandler()" method="POST">
@@ -78,23 +76,16 @@
 @endpush
 
 @push('script')
-    <!-- DataTables  & Plugins -->
-    <script src="{{ asset('adminlte') }}/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="{{ asset('adminlte') }}/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js">
-    </script>
-    <script src="{{ asset('adminlte') }}/plugins/datatables-responsive/js/dataTables.responsive.min.js">
-    </script>
-    <script src="{{ asset('adminlte') }}/plugins/datatables-responsive/js/responsive.bootstrap4.min.js">
-    </script>
+    @include('layouts.datatable_scripts')
+
     <!-- Page Script -->
     <script>
         let table;
+
         $(function() {
-            const tableOptions = {
-                responsive: true,
-                ajax: {
-                    url: '/outlets/datatable'
-                },
+            table = $('#outlets-table').DataTable({
+                ...DATATABLE_OPTIONS,
+                ajax: '/outlets/datatable',
                 columns: [{
                         data: 'DT_RowIndex',
                     },
@@ -113,26 +104,22 @@
                         sortable: false,
                     }
                 ]
-            }
-            table = $('#outletTable').DataTable(tableOptions);
+            });
         });
 
-        const createHandler = function(url) {
+        const createHandler = (url) => {
             clearErrors();
-            const modal = $('#formModal');
+            const modal = $('#form-modal');
             modal.modal('show');
             modal.find('.modal-title').text('Buat outlet baru');
             modal.find('form')[0].reset();
             modal.find('form').attr('action', url);
             modal.find('[name=_method]').val('post');
-            modal.on('shown.bs.modal', function() {
-                modal.find('[name=name]').focus();
-            });
         }
 
-        const editHandler = (url) => {
+        const editHandler = async (url) => {
             clearErrors();
-            const modal = $('#formModal');
+            const modal = $('#form-modal');
             modal.modal('show');
             modal.find('.modal-title').text('Edit outlet');
             modal.find('form')[0].reset();
@@ -140,51 +127,37 @@
             modal.find('[name=_method]').val('put');
             modal.find('input').attr('disabled', true);
             modal.find('select').attr('disabled', true);
-            modal.on('shown.bs.modal', function() {
-                modal.find('[name=name]').focus();
-            });
 
-            $.get(url)
-                .done((res) => {
-                    const outlet = res.outlet;
-                    modal.find('[name=name]').val(outlet.name);
-                    modal.find('[name=phone]').val(outlet.phone);
-                    modal.find('[name=address]').val(outlet.address);
-                })
-                .fail((err) => {
-                    toaster.fire({
-                        icon: 'error',
-                        title: 'Tidak dapat mengambil data'
-                    });
-                }).always(() => {
-                    modal.find('input').attr('disabled', false);
-                    modal.find('select').attr('disabled', false);
-                });
+            try {
+                let res = await fetchData(url);
+                modal.find('[name=name]').val(res.outlet.name);
+                modal.find('[name=phone]').val(res.outlet.phone);
+                modal.find('[name=address]').val(res.outlet.address);
+            } catch (err) {
+                toast('Tidak dapat mengambil data', 'error');
+            }
+
+            modal.find('input').attr('disabled', false);
+            modal.find('select').attr('disabled', false);
         }
 
-        const submitHandler = function() {
+        const submitHandler = async () => {
             event.preventDefault();
-            const url = $('#formModal form').attr('action');
-            const formData = $('#formModal form').serialize();
-            $.post(url, formData)
-                .done((res) => {
-                    $('#formModal').modal('hide');
-                    table.ajax.reload();
-                    toaster.fire({
-                        icon: 'success',
-                        title: res.message
-                    });
-                }).fail((err) => {
-                    if (err.status === 422) validationErrorHandler(err.responseJSON.errors);
-                    toaster.fire({
-                        icon: 'error',
-                        title: 'Terjadi kesalahan'
-                    });
-                });
+            const url = $('#form-modal form').attr('action');
+            const formData = $('#form-modal form').serialize();
+            try {
+                let res = await $.post(url, formData);
+                $('#form-modal').modal('hide');
+                table.ajax.reload();
+                toast(res.message, 'success');
+            } catch (err) {
+                if (err.status === 422) validationErrorHandler(err.responseJSON.errors);
+                toast('Terjadi kesalahan', 'error');
+            }
         }
 
-        const deleteHandler = function(url) {
-            Swal.fire({
+        const deleteHandler = async (url) => {
+            let result = await Swal.fire({
                 title: 'Hapus Outlet',
                 text: 'Anda yakin ingin menghapus outlet ini?',
                 icon: 'warning',
@@ -193,24 +166,19 @@
                 cancelButtonColor: '#037AFC',
                 confirmButtonText: 'Hapus',
                 cancelButtonText: 'Batal',
-            }).then((result) => {
-                if (!result.isConfirmed) return;
-                return $.post(url, {
-                    '_token': $('[name=_token]').val(),
-                    '_method': 'delete'
-                }).then((res) => {
-                    table.ajax.reload();
-                    toaster.fire({
-                        icon: 'success',
-                        title: res.message
-                    });
-                }).catch((err) => {
-                    toaster.fire({
-                        icon: 'error',
-                        title: err.responseJSON.message ?? 'Error'
-                    });
-                });
             });
+            if (result.isConfirmed) {
+                try {
+                    let res = await $.post(url, {
+                        '_token': $('[name=_token]').val(),
+                        '_method': 'delete'
+                    });
+                    table.ajax.reload();
+                    toast(res.message, 'success');
+                } catch {
+                    toast('Terjadi kesalahan', 'error');
+                }
+            }
         }
     </script>
 @endpush

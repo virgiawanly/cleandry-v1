@@ -77,41 +77,9 @@
     <script src="{{ asset('adminlte') }}/dist/js/adminlte.min.js"></script>
     <!-- SweetAlert2 -->
     <script src="{{ asset('adminlte') }}/plugins/sweetalert2/sweetalert2.min.js"></script>
-    <!-- General Script -->
-    <script>
-        const toaster = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-        });
-
-        const validationErrorHandler = function(errors) {
-            clearErrors();
-            for (const key in errors) {
-                $(`[name=${key}]`).after(`<span class="form-errors text-danger">${errors[key][0]}</span>`);
-            }
-        }
-
-        const clearErrors = function() {
-            $('span.form-errors').remove();
-        }
-
-        const logoutHandler = function() {
-            Swal.fire({
-                title: 'Logout?',
-                text: 'Anda yakin ingin logout?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#6C757D',
-                cancelButtonColor: '#4DA3B8',
-                confirmButtonText: 'Logout',
-            }).then((result) => {
-                if (!result.isConfirmed) return;
-                $('#logoutForm').submit();
-            });
-        }
-    </script>
+    <!-- General Scripts -->
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/constants.js') }}"></script>
     <!-- Page Scripts -->
     @stack('script')
 </body>

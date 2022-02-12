@@ -28,6 +28,21 @@ class OutletController extends Controller
     }
 
     /**
+     * Return all outlets data.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function data()
+    {
+        $outlets = Outlet::all();
+
+        return response()->json([
+            'message' => 'Data outlet',
+            'outlets' => $outlets,
+        ]);
+    }
+
+    /**
      * Return data for DataTables.
      *
      * @return \Illuminate\Http\Response
@@ -74,7 +89,6 @@ class OutletController extends Controller
         Outlet::create($payload);
 
         return response()->json([
-            'success' => true,
             'message' => 'Outlet berhasil dibuat'
         ], Response::HTTP_OK);
     }
@@ -88,7 +102,6 @@ class OutletController extends Controller
     public function show(Outlet $outlet)
     {
         return response()->json([
-            'success' => true,
             'message' => 'Data outlet',
             'outlet' => $outlet
         ], Response::HTTP_OK);
@@ -116,7 +129,6 @@ class OutletController extends Controller
         ]);
 
         return response()->json([
-            'success' => true,
             'message' => 'Outlet berhasil diupdate'
         ], Response::HTTP_OK);
     }
@@ -131,7 +143,6 @@ class OutletController extends Controller
     {
         if ($outlet->delete()) {
             return response()->json([
-                'success' => true,
                 'message' => 'Outlet berhasil dihapus'
             ], Response::HTTP_OK);
         };

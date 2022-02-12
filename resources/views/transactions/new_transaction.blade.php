@@ -199,5 +199,5 @@
     <!-- Select2 -->
     <script src="{{ asset('adminlte') }}/plugins/select2/js/select2.full.min.js"></script>
     <!-- Page script -->
-    <script src="{{ asset('js/transactions.js') }}"></script>
+    <script src="{{ asset('js/pages/transactions.js') }}"></script>
 @endpush

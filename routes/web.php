@@ -30,8 +30,9 @@ Route::middleware('auth')->post('/logout', [AuthController::class, 'logout']);
 Route::middleware('auth')->group(function () {
     Route::get('/', [PageController::class, 'dashboard'])->name('pages.dashboard');
 
-    Route::get('/outlets/datatable', [OutletController::class, 'datatable'])->name('outlets.datatable');
-    Route::apiResource('/outlets', OutletController::class);
+    Route::get('outlets/data', [OutletController::class, 'data'])->name('outlets.data');
+    Route::get('outlets/datatable', [OutletController::class, 'datatable'])->name('outlets.datatable');
+    Route::apiResource('outlets', OutletController::class);
 
     Route::get('/users/datatable', [UserController::class, 'datatable'])->name('users.datatable');
     Route::apiResource('/users', UserController::class);
