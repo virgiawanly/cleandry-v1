@@ -32,6 +32,21 @@ class UserController extends Controller
     }
 
     /**
+     * Return all users data.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function data()
+    {
+        $users = User::all();
+
+        return response()->json([
+            'message' => 'Data outlet',
+            'users' => $users,
+        ]);
+    }
+
+    /**
      * Return data for DataTables.
      *
      * @return \Illuminate\Http\Response
@@ -66,7 +81,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
-            'phone' => 'max:16|unique:users,phone',
+            'phone' => 'max:24|unique:users,phone',
             'password' => 'required|min:5|confirmed',
             'password_confirmation' => 'required',
             'role' => 'required|in:admin,owner,cashier',
@@ -85,7 +100,6 @@ class UserController extends Controller
         User::create($payload);
 
         return response()->json([
-            'success' => true,
             'message' => 'Registrasi user berhasil'
         ], Response::HTTP_OK);
     }
@@ -99,7 +113,6 @@ class UserController extends Controller
     public function show(User $user)
     {
         return response()->json([
-            'success' => true,
             'message' => 'Data user',
             'user' => $user
         ], Response::HTTP_OK);
@@ -117,7 +130,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'phone' => 'max:16|unique:users,phone,' . $user->id,
+            'phone' => 'max:24|unique:users,phone,' . $user->id,
             'role' => 'required|in:admin,owner,cashier',
             'outlet_id' => 'required|exists:outlets,id',
         ]);
@@ -141,7 +154,6 @@ class UserController extends Controller
         $user->update($payload);
 
         return response()->json([
-            'success' => true,
             'message' => 'User berhasil diupdate'
         ], Response::HTTP_OK);
     }

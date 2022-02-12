@@ -12,12 +12,12 @@
                     <h3 class="card-title">Data outlet</h3>
                     <div class="card-tools">
                         <button class="btn btn btn-primary" onclick="createHandler('{{ route('outlets.store') }}')">
-                            <i class="far fa-plus-square mr-1"></i><span>Tambah outlet</span>
+                            <i class="far fa-plus-square mr-1"></i><span>Tambah Outlet</span>
                         </button>
                     </div>
                 </div>
-                <div class="card-body">
-                    <table id="outlets-table" class="table table-hover table-striped">
+                <div class="card-body p-0">
+                    <table id="outlets-table" class="table table-hover table-striped w-100">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -111,7 +111,7 @@
             clearErrors();
             const modal = $('#form-modal');
             modal.modal('show');
-            modal.find('.modal-title').text('Buat outlet baru');
+            modal.find('.modal-title').text('Buat Outlet Baru');
             modal.find('form')[0].reset();
             modal.find('form').attr('action', url);
             modal.find('[name=_method]').val('post');
@@ -121,7 +121,7 @@
             clearErrors();
             const modal = $('#form-modal');
             modal.modal('show');
-            modal.find('.modal-title').text('Edit outlet');
+            modal.find('.modal-title').text('Edit Outlet');
             modal.find('form')[0].reset();
             modal.find('form').attr('action', url);
             modal.find('[name=_method]').val('put');
@@ -148,8 +148,8 @@
             try {
                 let res = await $.post(url, formData);
                 $('#form-modal').modal('hide');
-                table.ajax.reload();
                 toast(res.message, 'success');
+                table.ajax.reload();
             } catch (err) {
                 if (err.status === 422) validationErrorHandler(err.responseJSON.errors);
                 toast('Terjadi kesalahan', 'error');
@@ -173,9 +173,9 @@
                         '_token': $('[name=_token]').val(),
                         '_method': 'delete'
                     });
-                    table.ajax.reload();
                     toast(res.message, 'success');
-                } catch {
+                    table.ajax.reload();
+                } catch (err) {
                     toast('Terjadi kesalahan', 'error');
                 }
             }

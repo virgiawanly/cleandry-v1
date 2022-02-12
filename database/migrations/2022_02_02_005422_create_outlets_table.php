@@ -17,7 +17,7 @@ class CreateOutletsTable extends Migration
             $table->id();
             $table->string('name', 128);
             $table->text('address');
-            $table->string('phone', 16);
+            $table->string('phone', 24);
             $table->timestamps();
         });
     }

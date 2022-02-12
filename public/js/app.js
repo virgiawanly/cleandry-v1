@@ -18,15 +18,14 @@ const toast = (message, type) => {
 
 const validationErrorHandler = (errors) => {
     clearErrors();
-    for (const key in errors) {
-        $(`[name=${key}]`).after(
-            `<span class="form-errors text-danger">${errors[key][0]}</span>`
-        );
+    for (let name in errors) {
+        let container = $(`[name=${name}]`).closest(".form-group").eq(0);
+        container.append( `<div class="small form-errors text-danger">${errors[name][0]}</div>`);
     }
 };
 
 const clearErrors = () => {
-    $("span.form-errors").remove();
+    $(".form-errors").remove();
 };
 
 const logoutHandler = async () => {

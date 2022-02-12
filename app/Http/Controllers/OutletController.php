@@ -76,7 +76,7 @@ class OutletController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'phone' => 'required|max:16',
+            'phone' => 'required|max:24',
             'address' => 'required'
         ]);
 
@@ -118,7 +118,7 @@ class OutletController extends Controller
     {
         $request->validate([
             'name' => 'required|string',
-            'phone' => 'required|max:16',
+            'phone' => 'required|max:24',
             'address' => 'required'
         ]);
 
