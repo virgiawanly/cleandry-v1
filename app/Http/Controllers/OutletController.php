@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Outlet;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class OutletController extends Controller
@@ -25,6 +26,46 @@ class OutletController extends Controller
                 ]
             ],
         ]);
+    }
+
+    /**
+     * Show select outlet page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function selectOutlet()
+    {
+        $outlets = Outlet::all();
+        return view('outlets.select_outlet', [
+            'title' => 'Pilih Outlet',
+            'breadcrumbs' => [
+                [
+                    'href' => '/select-outlet',
+                    'label' => 'Pilih Outlet'
+                ]
+            ],
+            'outlets' => $outlets,
+        ]);
+    }
+
+    /**
+     * Set selected outlet session.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function setOutlet(Request $request)
+    {
+        $request->validate([
+            'outlet_id' => 'required',
+        ]);
+
+        if (Auth::user()->is_super) {
+            $outlet = Outlet::find($request->outlet_id);
+            $request->session()->put('outlet', $outlet);
+        }
+
+        return redirect()->to('/');
     }
 
     /**
@@ -56,11 +97,11 @@ class OutletController extends Controller
             ->addColumn('actions', function ($outlet) {
                 $editBtn = '<button onclick="editHandler(' . "'" . route('outlets.update', $outlet->id) . "'" . ')" class="btn btn-warning mx-1 mb-1">
                     <i class="fas fa-edit mr-1"></i>
-                    <span>Edit outlet</span>
+                    <span>Edit</span>
                 </button>';
                 $deleteBtn = '<button onclick="deleteHandler(' . "'" . route('outlets.destroy', $outlet->id) . "'" . ')" class="btn btn-danger mx-1 mb-1">
                     <i class="fas fa-trash mr-1"></i>
-                    <span>Hapus outlet</span>
+                    <span>Hapus</span>
                 </button>';
                 return $editBtn . $deleteBtn;
             })->rawColumns(['actions'])->make(true);

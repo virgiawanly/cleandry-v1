@@ -5,7 +5,7 @@ const toaster = Swal.mixin({
     timer: 3000,
 });
 
-const toast = (message, type) => {
+const toast = (message = "", type) => {
     Swal.fire({
         toast: true,
         position: "top-end",

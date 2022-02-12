@@ -30,20 +30,24 @@ Route::middleware('auth')->post('/logout', [AuthController::class, 'logout']);
 Route::middleware('auth')->group(function () {
     Route::get('/', [PageController::class, 'dashboard'])->name('pages.dashboard');
 
-    Route::get('outlets/data', [OutletController::class, 'data'])->name('outlets.data');
-    Route::get('outlets/datatable', [OutletController::class, 'datatable'])->name('outlets.datatable');
-    Route::apiResource('outlets', OutletController::class);
+    Route::get('/select-outlet', [OutletController::class, 'selectOutlet'])->name('outlets.select');
+    Route::post('/select-outlet', [OutletController::class, 'setOutlet']);
+    Route::get('/outlets/data', [OutletController::class, 'data'])->name('outlets.data');
+    Route::get('/outlets/datatable', [OutletController::class, 'datatable'])->name('outlets.datatable');
+    Route::apiResource('/outlets', OutletController::class);
 
-    Route::get('users/data', [UserController::class, 'data'])->name('users.data');
+    Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
     Route::get('/users/datatable', [UserController::class, 'datatable'])->name('users.datatable');
     Route::apiResource('/users', UserController::class);
-
-    Route::get('/services/datatable', [ServiceController::class, 'datatable'])->name('services.datatable');
-    Route::apiResource('/services', ServiceController::class);
 
     Route::get('/members/datatable', [MemberController::class, 'datatable'])->name('members.datatable');
     Route::apiResource('/members', MemberController::class);
 
     Route::get('/transactions/new-transaction', [TransactionController::class, 'newTransaction']);
     Route::post('/transactions', [TransactionController::class, 'store']);
+});
+
+Route::middleware(['auth', 'outlet'])->prefix('/o/{outlet}')->group(function () {
+    Route::get('/services/datatable', [ServiceController::class, 'datatable'])->name('services.datatable');
+    Route::apiResource('/services', ServiceController::class);
 });

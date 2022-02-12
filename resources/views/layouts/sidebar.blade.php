@@ -8,17 +8,13 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-        @auth
+        @if (request()->session()->has('outlet'))
             <!-- Sidebar user (optional) -->
-            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                <div class="image">
-                    <img src="https://picsum.photos/200/200" class="img-circle elevation-2" alt="User Image">
-                </div>
-                <div class="info">
-                    <a href="#" class="d-block">{{ Auth::user()->name }}</a>
-                </div>
+            <div class="user-panel p-3">
+                <div class="text-sm text-secondary">Outlet</div>
+                <a href="#" class="d-block">{{ request()->session()->get('outlet')->name }}</a>
             </div>
-        @endauth
+        @endif
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
@@ -51,13 +47,43 @@
                     </a>
                 </li>
                 <li class="nav-header">OUTLET</li>
+                @if (Auth::user()->is_super === 1 &&
+    request()->session()->has('outlet'))
+                    <li class="nav-item">
+                        <a href="/select-outlet" class="nav-link">
+                            <i class="nav-icon fas fa-arrow-left"></i>
+                            <p>
+                                Pilih Outlet
+                            </p>
+                        </a>
+                    </li>
+                @endif
                 <li class="nav-item">
-                    <a href="/services" class="nav-link">
-                        <i class="nav-icon fas fa-shopping-basket"></i>
-                        <p>
-                            Layanan
-                        </p>
-                    </a>
+                    @if (Auth::user()->is_super)
+                        @if (request()->session()->has('outlet'))
+                            <a href="/o/{{ request()->session()->get('outlet')->id }}/services"
+                                class="nav-link">
+                                <i class="nav-icon fas fa-shopping-basket"></i>
+                                <p>
+                                    Layanan
+                                </p>
+                            </a>
+                        @else
+                            <a href="/select-outlet" class="nav-link">
+                                <i class="nav-icon fas fa-shopping-basket"></i>
+                                <p>
+                                    Layanan
+                                </p>
+                            </a>
+                        @endif
+                    @else
+                        <a href="/o/{{ Auth::user()->outlet_id }}/services" class="nav-link">
+                            <i class="nav-icon fas fa-shopping-basket"></i>
+                            <p>
+                                Layanan
+                            </p>
+                        </a>
+                    @endif
                 </li>
                 <li class="nav-item">
                     <a href="/members" class="nav-link">

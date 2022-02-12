@@ -60,11 +60,11 @@ class UserController extends Controller
             ->addColumn('actions', function ($user) {
                 $editBtn = '<button onclick="editHandler(' . "'" . route('users.update', $user->id) . "'" . ')" class="btn btn-warning mx-1 mb-1">
                     <i class="fas fa-edit mr-1"></i>
-                    <span>Edit user</span>
+                    <span>Edit</span>
                 </button>';
                 $deleteBtn = '<button onclick="deleteHandler(' . "'" . route('users.destroy', $user->id) . "'" . ')" class="btn btn-danger mx-1 mb-1">
                     <i class="fas fa-trash mr-1"></i>
-                    <span>Hapus user</span>
+                    <span>Hapus</span>
                 </button>';
                 return $editBtn . $deleteBtn;
             })->rawColumns(['actions'])->make(true);

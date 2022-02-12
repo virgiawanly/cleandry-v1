@@ -1,9 +1,7 @@
 @extends('layouts.main')
 
 @push('head')
-    <!-- DataTables -->
-    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    @include('layouts.datatable_styles')
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
@@ -149,14 +147,7 @@
 @endpush
 
 @push('script')
-    <!-- DataTables  & Plugins -->
-    <script src="{{ asset('adminlte') }}/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="{{ asset('adminlte') }}/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js">
-    </script>
-    <script src="{{ asset('adminlte') }}/plugins/datatables-responsive/js/dataTables.responsive.min.js">
-    </script>
-    <script src="{{ asset('adminlte') }}/plugins/datatables-responsive/js/responsive.bootstrap4.min.js">
-    </script>
+    @include('layouts.datatable_scripts')
     <!-- Select2 -->
     <script src="{{ asset('adminlte') }}/plugins/select2/js/select2.full.min.js"></script>
     <!-- Page Script -->
@@ -165,7 +156,7 @@
         let outletOptions;
 
         $(function() {
-            const tableOptions = {
+            table = $('#users-table').DataTable({
                 ...DATATABLE_OPTIONS,
                 ajax: '/users/datatable',
                 columns: [{
@@ -211,8 +202,7 @@
                         sortable: false,
                     }
                 ]
-            }
-            table = $('#users-table').DataTable(tableOptions);
+            });
             //Initialize Select2 Elements
             fetchOutletOptions();
         });

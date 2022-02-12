@@ -37,6 +37,11 @@ class AuthController extends Controller
         }
 
         $request->session()->regenerate();
+
+        if (Auth::user()->is_super !== 1) {
+            $request->session()->put('outlet', Auth::user()->outlet);
+        }
+
         return redirect()->intended('/');
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Outlet;
 use App\Models\Service;
 use App\Models\ServiceType;
 use Illuminate\Http\Request;
@@ -14,9 +15,10 @@ class ServiceController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Outlet $outlet)
     {
         $types = ServiceType::all();
 
@@ -28,29 +30,31 @@ class ServiceController extends Controller
                     'label' => 'Layanan'
                 ]
             ],
-            'types' => $types
+            'types' => $types,
+            'outlet' => $outlet
         ]);
     }
 
     /**
      * Datatable
      *
+     * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
      */
-    public function datatable()
+    public function datatable(Outlet $outlet)
     {
-        $services = Service::with('type', 'outlet')->where('outlet_id', Auth::user()->outlet_id)->get();
+        $services = Service::with('type', 'outlet')->where('outlet_id', $outlet->id)->get();
 
         return DataTables::of($services)
             ->addIndexColumn()
-            ->addColumn('actions', function($service) {
-                $editBtn = '<button onclick="editHandler(' . "'" . route('services.update', $service->id) . "'" . ')" class="btn btn-info mx-1">
+            ->addColumn('actions', function ($service) use ($outlet) {
+                $editBtn = '<button onclick="editHandler(' . "'" . route('services.update', [$outlet->id,  $service->id]) . "'" . ')" class="btn btn-info mx-1">
                     <i class="fas fa-edit"></i>
-                    <span>Edit layanan</span>
+                    <span>Edit</span>
                 </button>';
-                $deletBtn = '<button onclick="deleteHandler(' . "'" . route('services.destroy', $service->id) . "'" . ')" class="btn btn-danger mx-1">
+                $deletBtn = '<button onclick="deleteHandler(' . "'" . route('services.destroy', [$outlet->id,  $service->id]) . "'" . ')" class="btn btn-danger mx-1">
                     <i class="fas fa-trash"></i>
-                    <span>Hapus layanan</span>
+                    <span>Hapus</span>
                 </button>';
                 return $editBtn . $deletBtn;
             })->rawColumns(['actions'])->make(true);
@@ -59,10 +63,11 @@ class ServiceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
+     * @param  \App\Models\Outlet  $outlet
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Outlet $outlet)
     {
         $request->validate([
             'name' => 'required',
@@ -78,10 +83,9 @@ class ServiceController extends Controller
             'unit' => $request->unit,
         ];
 
-        Auth::user()->outlet->services()->create($payload);
+        $outlet->services()->create($payload);
 
         return response()->json([
-            'success' => true,
             'message' => 'Layanan berhasil ditambahkan'
         ], Response::HTTP_OK);
     }
@@ -89,14 +93,14 @@ class ServiceController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Service  $service
      * @return \Illuminate\Http\Response
      */
-    public function show(Service $service)
+    public function show(Outlet $outlet, Service $service)
     {
         $service->load(['type']);
         return response()->json([
-            'success' => true,
             'message' => 'Data layanan',
             'service' => $service
         ], Response::HTTP_OK);
@@ -106,10 +110,11 @@ class ServiceController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Service  $service
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Service $service)
+    public function update(Request $request, Outlet $outlet, Service $service)
     {
         $request->validate([
             'name' => 'required',
@@ -128,7 +133,6 @@ class ServiceController extends Controller
         $service->update($payload);
 
         return response()->json([
-            'success' => true,
             'message' => 'Layanan berhasil ditambahkan'
         ], Response::HTTP_OK);
     }
@@ -136,10 +140,11 @@ class ServiceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Service  $service
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Service $service)
+    public function destroy(Outlet $outlet, Service $service)
     {
         if ($service->delete()) {
             return response()->json([
