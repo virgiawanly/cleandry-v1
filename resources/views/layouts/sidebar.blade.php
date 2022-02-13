@@ -51,7 +51,7 @@
     request()->session()->has('outlet'))
                     <li class="nav-item">
                         <a href="/select-outlet" class="nav-link">
-                            <i class="nav-icon fas fa-arrow-left"></i>
+                            <i class="nav-icon fas fa-store-alt"></i>
                             <p>
                                 Pilih Outlet
                             </p>
@@ -86,12 +86,31 @@
                     @endif
                 </li>
                 <li class="nav-item">
-                    <a href="/members" class="nav-link">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>
-                            Pelanggan
-                        </p>
-                    </a>
+                    @if (Auth::user()->is_super)
+                        @if (request()->session()->has('outlet'))
+                            <a href="/o/{{ request()->session()->get('outlet')->id }}/members"
+                                class="nav-link">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>
+                                    Member
+                                </p>
+                            </a>
+                        @else
+                            <a href="/select-outlet" class="nav-link">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>
+                                    Member
+                                </p>
+                            </a>
+                        @endif
+                    @else
+                        <a href="/o/{{ Auth::user()->outlet_id }}/members" class="nav-link">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>
+                                Member
+                            </p>
+                        </a>
+                    @endif
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link">

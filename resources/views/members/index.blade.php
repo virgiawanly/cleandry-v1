@@ -1,9 +1,8 @@
 @extends('layouts.main')
 
 @push('head')
-    <!-- DataTables -->
-    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+    <meta name="outlet-id" content="{{ $outlet->id }}">
+    @include('layouts.datatable_styles')
 @endpush
 
 @section('content')
@@ -11,15 +10,23 @@
         <div class="col">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Data member</h3>
+                    <div class="card-title">
+                        <h5 class="mb-0">Data Member</h5>
+                        <div class="text-sm">Outlet : {{ $outlet->name }}</div>
+                    </div>
                     <div class="card-tools">
-                        <button class="btn btn btn-primary" onclick="createHandler('{{ route('members.store') }}')">
-                            <i class="far fa-plus-square mr-1"></i><span>Tambah member</span>
+                        @if (Auth::user()->is_super)
+                            <a href="/select-outlet" class="btn btn-info"><i class="fas fa-exchange-alt mr-1"></i>Ganti
+                                Outlet</a>
+                        @endif
+                        <button class="btn btn btn-primary"
+                            onclick="createHandler('{{ route('members.store', [$outlet->id]) }}')">
+                            <i class="far fa-plus-square mr-1"></i><span>Tambah Member</span>
                         </button>
                     </div>
                 </div>
-                <div class="card-body">
-                    <table id="membersTable" class="table table-hover table-striped">
+                <div class="card-body p-0">
+                    <table id="members-table" class="table table-hover table-striped w-100">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -42,7 +49,7 @@
 @endsection
 
 @push('bottom')
-    <div class="modal fade" role="dialog" id="formModal">
+    <div class="modal fade" role="dialog" id="form-modal">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <form action="#" onsubmit="submitHandler()" method="POST">
@@ -68,7 +75,7 @@
                             <input type="text" name="email" class="form-control" id="email" placeholder="name@domain.com">
                         </div>
                         <div class="form-group">
-                            <label for="gender">Jenis Kelamin</label>
+                            <label for="gender">J.K</label>
                             <div class="d-flex align-items-center" style="gap: 15px">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="gender" id="genderMale" value="M">
@@ -101,23 +108,16 @@
 @endpush
 
 @push('script')
-    <!-- DataTables  & Plugins -->
-    <script src="{{ asset('adminlte') }}/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="{{ asset('adminlte') }}/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js">
-    </script>
-    <script src="{{ asset('adminlte') }}/plugins/datatables-responsive/js/dataTables.responsive.min.js">
-    </script>
-    <script src="{{ asset('adminlte') }}/plugins/datatables-responsive/js/responsive.bootstrap4.min.js">
-    </script>
+    @include('layouts.datatable_scripts')
     <!-- Page Script -->
     <script>
         let table;
+
         $(function() {
-            const tableOptions = {
-                responsive: true,
-                ajax: {
-                    url: '/members/datatable'
-                },
+            const outletId = $("meta[name='outlet-id']").attr("content");
+            table = $('#members-table').DataTable({
+                ...DATATABLE_OPTIONS,
+                ajax: `/o/${outletId}/members/datatable`,
                 columns: [{
                         data: 'DT_RowIndex',
                     },
@@ -143,79 +143,61 @@
                         sortable: false,
                     }
                 ]
-            }
-            table = $('#membersTable').DataTable(tableOptions);
+            });
         });
 
-        const createHandler = function(url) {
+        const createHandler = (url) => {
             clearErrors();
-            const modal = $('#formModal');
+            const modal = $('#form-modal');
             modal.modal('show');
-            modal.find('.modal-title').text('Tambah member baru');
+            modal.find('.modal-title').text('Register Member Baru');
             modal.find('form')[0].reset();
             modal.find('form').attr('action', url);
             modal.find('[name=_method]').val('post');
-            modal.on('shown.bs.modal', function() {
-                modal.find('[name=name]').focus();
-            });
         }
 
-        const editHandler = (url) => {
+        const editHandler = async (url) => {
             clearErrors();
-            const modal = $('#formModal');
+            const modal = $('#form-modal');
             modal.modal('show');
             modal.find('.modal-title').text('Edit member');
             modal.find('form')[0].reset();
             modal.find('form').attr('action', url);
             modal.find('[name=_method]').val('put');
             modal.find('input').attr('disabled', true);
-            modal.on('shown.bs.modal', function() {
-                modal.find('[name=name]').focus();
-            });
 
-            $.get(url)
-                .done((res) => {
-                    const member = res.member;
-                    modal.find('[name=name]').val(member.name);
-                    modal.find('[name=phone]').val(member.phone);
-                    modal.find('[name=email]').val(member.email);
-                    modal.find('[name=address]').val(member.address);
-                    modal.find(`[name=gender][value='${member.gender}']`).prop('checked', true);
-                })
-                .fail((err) => {
-                    toaster.fire({
-                        icon: 'error',
-                        title: 'Tidak dapat mengambil data'
-                    });
-                }).always(() => {
-                    modal.find('input').attr('disabled', false);
-                    modal.find('select').attr('disabled', false);
-                });
+            try {
+                let res = await fetchData(url);
+                modal.find('[name=name]').val(res.member.name);
+                modal.find('[name=phone]').val(res.member.phone);
+                modal.find('[name=email]').val(res.member.email);
+                modal.find('[name=address]').val(res.member.address);
+                modal.find(`[name=gender][value='${res.member.gender}']`).prop('checked', true);
+            } catch (err) {
+                toast('Tidak dapat mengambil data', 'error');
+                $('#form-modal').modal('hide');
+            }
+
+            modal.find('input').attr('disabled', false);
         }
 
-        const submitHandler = function() {
+        const submitHandler = async () => {
             event.preventDefault();
-            const url = $('#formModal form').attr('action');
-            const formData = $('#formModal form').serialize();
-            $.post(url, formData)
-                .done((res) => {
-                    $('#formModal').modal('hide');
-                    table.ajax.reload();
-                    toaster.fire({
-                        icon: 'success',
-                        title: res.message
-                    });
-                }).fail((err) => {
-                    if (err.status === 422) validationErrorHandler(err.responseJSON.errors);
-                    toaster.fire({
-                        icon: 'error',
-                        title: 'Terjadi kesalahan'
-                    });
-                });
+            let url = $('#form-modal form').attr('action');
+            let formData = $('#form-modal form').serialize();
+            try {
+                let res = await $.post(url, formData);
+                $('#form-modal').modal('hide');
+                toast(res.message, 'success');
+                table.ajax.reload();
+            } catch (err) {
+                if (err.status === 422) validationErrorHandler(err.responseJSON.errors);
+                toast('Terjadi kesalahan', 'error');
+            }
         }
 
-        const deleteHandler = function(url) {
-            Swal.fire({
+        const deleteHandler = async (url) => {
+            let result = await Swal.fire({
                 title: 'Hapus Member',
                 text: 'Anda yakin ingin menghapus member ini?',
                 icon: 'warning',
@@ -224,24 +206,19 @@
                 cancelButtonColor: '#037AFC',
                 confirmButtonText: 'Hapus',
                 cancelButtonText: 'Batal',
-            }).then((result) => {
-                if (!result.isConfirmed) return;
-                return $.post(url, {
-                    '_token': $('[name=_token]').val(),
-                    '_method': 'delete'
-                }).then((res) => {
-                    table.ajax.reload();
-                    toaster.fire({
-                        icon: 'success',
-                        title: res.message
-                    });
-                }).catch((err) => {
-                    toaster.fire({
-                        icon: 'error',
-                        title: err.responseJSON.message ?? 'Error'
-                    });
-                });
             });
+            if (result.isConfirmed) {
+                try {
+                    let res = await $.post(url, {
+                        '_token': $('[name=_token]').val(),
+                        '_method': 'delete'
+                    });
+                    toast(res.message, 'success');
+                    table.ajax.reload();
+                } catch (err) {
+                    toast('Terjadi kesalahan', 'error');
+                }
+            }
         }
     </script>
 @endpush

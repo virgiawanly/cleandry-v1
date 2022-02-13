@@ -18,7 +18,7 @@ class AccessOutlet
      */
     public function handle(Request $request, Closure $next)
     {
-        $outlet = $request->route('outlet');
+        $outlet = is_numeric($request->route('outlet')) ? Outlet::find($request->route('outlet')) : $request->route('outlet');
         if (!$outlet || Auth::user()->is_super !== 1 && Auth::user()->outlet_id !== $outlet->id) {
             return abort(404);
         }

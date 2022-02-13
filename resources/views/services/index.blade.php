@@ -198,6 +198,7 @@
                 modal.find(`[name=unit][value='${res.service.unit}']`).prop('checked', true);
             } catch (err) {
                 toast('Tidak dapat mengambil data', 'error');
+                $('#form-modal').modal('hide');
             }
 
             modal.find('input').attr('disabled', false);

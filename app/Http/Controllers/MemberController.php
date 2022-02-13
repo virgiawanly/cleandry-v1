@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
+use App\Models\Outlet;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -13,9 +14,10 @@ class MemberController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Outlet $outlet)
     {
         return view('members.index', [
             'title' => 'Kelola Member',
@@ -25,26 +27,28 @@ class MemberController extends Controller
                     'label' => 'Member'
                 ]
             ],
+            'outlet' => $outlet,
         ]);
     }
 
     /**
      * Return data for DataTables.
      *
+     * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
      */
-    public function datatable()
+    public function datatable(Outlet $outlet)
     {
-        $members = Member::where('outlet_id', Auth::user()->outlet_id)->get();
+        $members = Member::where('outlet_id', $outlet->id)->get();
 
         return DataTables::of($members)
             ->addIndexColumn()
-            ->addColumn('actions', function ($member) {
-                $editBtn = '<button onclick="editHandler(' . "'" . route('members.update', $member->id) . "'" . ')" class="btn btn-warning mx-1 mb-1">
+            ->addColumn('actions', function ($member) use ($outlet) {
+                $editBtn = '<button onclick="editHandler(' . "'" . route('members.update', [$outlet->id, $member->id]) . "'" . ')" class="btn btn-warning mx-1 mb-1">
                     <i class="fas fa-edit mr-1"></i>
                     <span>Edit member</span>
                 </button>';
-                $deleteBtn = '<button onclick="deleteHandler(' . "'" . route('members.destroy', $member->id) . "'" . ')" class="btn btn-danger mx-1 mb-1">
+                $deleteBtn = '<button onclick="deleteHandler(' . "'" . route('members.destroy', [$outlet->id, $member->id]) . "'" . ')" class="btn btn-danger mx-1 mb-1">
                     <i class="fas fa-trash mr-1"></i>
                     <span>Hapus member</span>
                 </button>';
@@ -56,13 +60,14 @@ class MemberController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Outlet $outlet)
     {
         $request->validate([
             'name' => 'required',
-            'phone' => 'required|max:16|unique:members,phone',
+            'phone' => 'required|max:24|unique:members,phone',
             'email' => 'email|unique:members,email',
             'gender' => 'required|in:M,F',
             'address' => 'required',
@@ -76,10 +81,9 @@ class MemberController extends Controller
             'address' => $request->address,
         ];
 
-        Auth::user()->outlet->members()->create($payload);
+        $outlet->members()->create($payload);
 
         return response()->json([
-            'success' => true,
             'message' => 'Registrasi member berhasil'
         ], Response::HTTP_OK);
     }
@@ -87,13 +91,13 @@ class MemberController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Member  $member
      * @return \Illuminate\Http\Response
      */
-    public function show(Member $member)
+    public function show(Outlet $outlet, Member $member)
     {
         return response()->json([
-            'success' => true,
             'message' => 'Data member',
             'member' => $member
         ], Response::HTTP_OK);
@@ -103,14 +107,15 @@ class MemberController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Member  $member
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Member $member)
+    public function update(Request $request, Outlet $outlet, Member $member)
     {
         $request->validate([
             'name' => 'required',
-            'phone' => 'required|max:16|unique:members,phone,' . $member->id,
+            'phone' => 'required|max:24|unique:members,phone,' . $member->id,
             'email' => 'email|unique:members,email,' . $member->id,
             'gender' => 'required|in:M,F',
             'address' => 'required',
@@ -127,7 +132,6 @@ class MemberController extends Controller
         $member->update($payload);
 
         return response()->json([
-            'success' => true,
             'message' => 'Member berhasil diupdate'
         ], Response::HTTP_OK);
     }
@@ -135,10 +139,11 @@ class MemberController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Member  $member
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Member $member)
+    public function destroy(Outlet $outlet, Member $member)
     {
         if ($member->delete()) {
             return response()->json([

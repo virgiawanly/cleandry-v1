@@ -16,7 +16,7 @@ class CreateMembersTable extends Migration
         Schema::create('members', function (Blueprint $table) {
             $table->id();
             $table->string('name', 128);
-            $table->string('phone', 16);
+            $table->string('phone', 24);
             $table->string('email')->nullable();
             $table->text('address');
             $table->enum('gender', ['M', 'F']);
