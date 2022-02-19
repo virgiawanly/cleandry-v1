@@ -26,7 +26,7 @@ class CreateTransactionsTable extends Migration
             $table->double('discount')->default(0);
             $table->enum('discount_type', ['nominal', 'percent'])->nullable();
             $table->double('tax')->default(0);
-            $table->enum('status', ['received', 'on_process', 'done', 'accepted'])->default('received');
+            $table->enum('status', ['new', 'process', 'done', 'taken'])->default('new');
             $table->enum('payment_status', ['paid', 'unpaid']);
             $table->timestamps();
         });

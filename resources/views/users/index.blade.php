@@ -8,17 +8,17 @@
     <style>
         /* Labels for checked inputs */
         input[name="role"]+label {
-            border: 1px solid #CED4DA;
+            border: 2px solid #CED4DA;
             cursor: pointer;
             transition: .3s;
             box-shadow: none;
         }
 
         input[name="role"]:checked+label {
-            background-color: #007BFF;
-            color: #ffffff;
-            border: 1px solid #007BFF;
-            box-shadow: 1px 0 8px rgba(0, 0, 0, 0.1);
+            background-color: rgba(23, 162, 184, 0.1);
+            color: rgba(23, 162, 184);
+            border: 1px solid rgba(23, 162, 184);
+            box-shadow: none;
         }
 
     </style>

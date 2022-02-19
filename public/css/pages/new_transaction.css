@@ -1,0 +1,23 @@
+input[name="payment_status"] + label {
+    display: block;
+}
+
+input[name="payment_status"] + label .card {
+    box-shadow: none;
+    border: 2px solid #dee2e6;
+    color: #535353;
+}
+
+input[name="payment_status"] + label i {
+    opacity: 0;
+}
+
+input[name="payment_status"]:checked + label i {
+    opacity: 1;
+}
+
+input[name="payment_status"]:checked + label .card {
+    border: 2px solid #17a2b8;
+    background-color: rgba(23, 164, 186, 0.1);
+    color: #17a2b8;
+}

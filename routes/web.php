@@ -39,15 +39,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
     Route::get('/users/datatable', [UserController::class, 'datatable'])->name('users.datatable');
     Route::apiResource('/users', UserController::class);
-
-    Route::get('/transactions/new-transaction', [TransactionController::class, 'newTransaction']);
-    Route::post('/transactions', [TransactionController::class, 'store']);
 });
 
 Route::middleware(['auth', 'outlet'])->prefix('/o/{outlet}')->group(function () {
+    Route::redirect('/', '/');
     Route::get('/services/datatable', [ServiceController::class, 'datatable'])->name('services.datatable');
     Route::apiResource('/services', ServiceController::class);
 
     Route::get('/members/datatable', [MemberController::class, 'datatable'])->name('members.datatable');
     Route::apiResource('/members', MemberController::class);
+
+    Route::get('/transactions/new-transaction', [TransactionController::class, 'newTransaction']);
+    Route::get('/transactions/datatable', [TransactionController::class, 'datatable'])->name('transactions.datatable');
+    Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
 });

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ServiceType;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -31,6 +32,18 @@ class DatabaseSeeder extends Seeder
             'phone' => '0895404922800',
             'outlet_id' => null,
             'is_super' => 0
+        ]);
+
+        ServiceType::insert([
+            [
+                'name' => 'Kaos'
+            ],
+            [
+                'name' => 'Selimut',
+            ],
+            [
+                'name' => 'Karpet',
+            ],
         ]);
     }
 }

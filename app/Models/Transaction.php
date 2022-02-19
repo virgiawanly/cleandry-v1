@@ -51,4 +51,25 @@ class Transaction extends Model
     {
         return $this->hasMany(TransactionDetail::class);
     }
+
+
+    /**
+     * Return transaction's member
+     *
+     * @return \App\Models\TransactionDetail
+     */
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
+    }
+
+    /**
+     * Return transaction's user
+     *
+     * @return \App\Models\TransactionDetail
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

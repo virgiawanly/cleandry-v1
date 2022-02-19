@@ -76,7 +76,7 @@
                                 </p>
                             </a>
                         @endif
-                    @else
+                    @elseif(Auth::user()->outlet_id)
                         <a href="/o/{{ Auth::user()->outlet_id }}/services" class="nav-link">
                             <i class="nav-icon fas fa-shopping-basket"></i>
                             <p>
@@ -88,8 +88,7 @@
                 <li class="nav-item">
                     @if (Auth::user()->is_super)
                         @if (request()->session()->has('outlet'))
-                            <a href="/o/{{ request()->session()->get('outlet')->id }}/members"
-                                class="nav-link">
+                            <a href="/o/{{ request()->session()->get('outlet')->id }}/members" class="nav-link">
                                 <i class="nav-icon fas fa-users"></i>
                                 <p>
                                     Member
@@ -103,7 +102,7 @@
                                 </p>
                             </a>
                         @endif
-                    @else
+                    @elseif(Auth::user()->outlet_id)
                         <a href="/o/{{ Auth::user()->outlet_id }}/members" class="nav-link">
                             <i class="nav-icon fas fa-users"></i>
                             <p>
@@ -143,12 +142,32 @@
                 </li>
                 <li class="nav-header">TRANSAKSI</li>
                 <li class="nav-item">
-                    <a href="/transactions/new-transaction" class="nav-link">
-                        <i class="nav-icon fas fa-cash-register"></i>
-                        <p>
-                            Transaksi Baru
-                        </p>
-                    </a>
+                    @if (Auth::user()->is_super)
+                        @if (request()->session()->has('outlet'))
+                            <a href="/o/{{ request()->session()->get('outlet')->id }}/transactions/new-transaction"
+                                class="nav-link">
+                                <i class="nav-icon fas fa-cash-register"></i>
+                                <p>
+                                    Transaksi Baru
+                                </p>
+                            </a>
+                        @else
+                            <a href="/select-outlet" class="nav-link">
+                                <i class="nav-icon fas fa-cash-register"></i>
+                                <p>
+                                    Transaksi Baru
+                                </p>
+                            </a>
+                        @endif
+                    @elseif(Auth::user()->outlet_id)
+                        <a href="/o/{{ Auth::user()->outlet_id }}/transactions/new-transaction"
+                            class="nav-link">
+                            <i class="nav-icon fas fa-cash-register"></i>
+                            <p>
+                                Transaksi Baru
+                            </p>
+                        </a>
+                    @endif
                 </li>
                 <li class="nav-item">
                     <a href="/transactions/report" class="nav-link">
