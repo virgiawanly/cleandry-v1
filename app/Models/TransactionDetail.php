@@ -31,4 +31,14 @@ class TransactionDetail extends Model
     {
         return $this->belongsTo(Transaction::class);
     }
+
+    /**
+     * Return transaction service
+     *
+     * @return \App\Models\Service
+     */
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
+    }
 }

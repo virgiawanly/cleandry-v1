@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TransactionCollection;
 use App\Models\Member;
 use App\Models\Outlet;
 use App\Models\Service;
@@ -14,23 +15,71 @@ use Yajra\DataTables\DataTables;
 
 class TransactionController extends Controller
 {
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \App\Models\Outlet  $outlet
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Outlet $outlet)
+    {
+        return view('transactions.index', [
+            'title' => 'Kelola Transaksi',
+            'breadcrumbs' => [
+                [
+                    'href' => '/o/' . $outlet->id . '/transactions',
+                    'label' => 'Member'
+                ]
+            ],
+            'outlet' => $outlet,
+        ]);
+    }
+
     /**
      * Return data for DataTables.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
      */
-    public function datatable(Outlet $outlet)
+    public function datatable(Request $request, Outlet $outlet)
     {
-        $transactions = Transaction::with(['user', 'member', 'details'])->where('outlet_id', $outlet->id)->get();
+        $status = null;
+        if ($request->has('status')) {
+            switch ($request->status) {
+                case 'new':
+                    $status = 'new';
+                    break;
+                case 'process':
+                    $status = 'process';
+                    break;
+                case 'done':
+                    $status = 'done';
+                    break;
+                case 'taken':
+                    $status = 'taken';
+                    break;
+                default:
+                    $status = null;
+            }
+        }
+
+        $transactions = Transaction::with(['user', 'member', 'details'])->where('outlet_id', $outlet->id)->when($status, function ($query) use ($status) {
+            return $query->where('status', $status);
+        })->get();
 
         return DataTables::of($transactions)
             ->addIndexColumn()
             ->addColumn('total_item', function ($transaction) {
                 return $transaction->details()->count();
             })
-            ->addColumn('actions', function ($transaction) use ($outlet) {
-                return '<button class="btn btn-info"><i class="fas fa-eye"></i></button>';
+            ->addColumn('actions', function ($transaction) {
+                $buttons = '';
+                if ($transaction->payment_status === 'unpaid') {
+                    $buttons .= '<button class="btn btn-success m-1 pay-button"><i class="fas fa-cash-register mr-1"></i><span>Bayar</span></button>';
+                }
+                $buttons .= '<button class="btn btn-info m-1 detail-button" data-id="' . $transaction->id . '"><i class="fas fa-eye mr-1"></i><span>Detail</span></button>';
+                return $buttons;
             })->rawColumns(['actions'])->make(true);
     }
 
@@ -131,5 +180,70 @@ class TransactionController extends Controller
         if ($response && $response['success']) {
             return response()->json($response, Response::HTTP_OK);
         }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Outlet  $outlet
+     * @param  \App\Models\Transaction  $transaction
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Outlet $outlet, Transaction $transaction)
+    {
+        $transaction->load(['details', 'outlet', 'user', 'member']);
+        $transaction['total_discount'] = $transaction->getTotalDiscount();
+        $transaction['total_price'] = $transaction->getTotalPrice();
+        $transaction['total_tax'] = $transaction->getTotalTax();
+        $transaction['total_payment'] = $transaction->getTotalPayment();
+        return response()->json([
+            'message' => 'Data Transaksi',
+            'transaction' => $transaction
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Outlet  $outlet
+     * @param  \App\Models\Transaction  $transaction
+     * @return \Illuminate\Http\Response
+     */
+    public function invoice(Request $request, Outlet $outlet, Transaction $transaction)
+    {
+        $transaction->load(['details', 'outlet', 'user', 'member']);
+        $transaction['total_discount'] = $transaction->getTotalDiscount();
+        $transaction['total_price'] = $transaction->getTotalPrice();
+        $transaction['total_tax'] = $transaction->getTotalTax();
+        $transaction['total_payment'] = $transaction->getTotalPayment();
+
+        if ($request->has('print') && $request->print == true) {
+            return view('transactions.invoice_print', [
+                'transaction' => $transaction,
+            ]);
+        } else {
+            return view('transactions.invoice', [
+                'title' => 'Invoice',
+                'breadcrumbs' => [
+                    [
+                        'href' => '/o/' . $outlet->id . '/transactions',
+                        'label' => 'Transaksi'
+                    ],
+                    [
+                        'href' => '/o/' . $outlet->id . '/transactions/' . $transaction->id . '/invoice',
+                        'label' => 'Invoice'
+                    ],
+                ],
+                'transaction' => $transaction
+            ]);
+        }
+    }
+
+    public function updatePayment(Request $request){
+
+    }
+
+    public function faktur(Request $request, $id){
+        $transaksi = Transaction::findOrFail($id);
     }
 }

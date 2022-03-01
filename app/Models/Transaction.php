@@ -72,4 +72,36 @@ class Transaction extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Return transaction's outlet
+     *
+     * @return \App\Models\Outlet
+     */
+    public function outlet()
+    {
+        return $this->belongsTo(Outlet::class);
+    }
+
+    public function getTotalPrice()
+    {
+        return $this->details->reduce(function ($total, $detail) {
+            return $total + ($detail->price_history * $detail->qty);
+        });
+    }
+
+    public function getTotalDiscount()
+    {
+        return $this->discount_type == 'percent' ? $this->getTotalPrice() * ($this->discount / 100) : $this->discount;
+    }
+
+    public function getTotalTax()
+    {
+        return $this->getTotalPrice() * ($this->tax / 100);
+    }
+
+    public function getTotalPayment()
+    {
+        return $this->getTotalPrice() - $this->getTotalDiscount() + $this->getTotalTax() + $this->additional_cost;
+    }
 }

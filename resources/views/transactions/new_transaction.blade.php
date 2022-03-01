@@ -77,7 +77,7 @@
                             <!-- !.row -->
                             <div class="form-group row">
                                 <div class="col-sm-3">
-                                    <label for="">Tanggal Pesanan</label>
+                                    <label for="">Tanggal Transaksi</label>
                                 </div>
                                 <div class="col-sm-9 form-group mb-0">
                                     <input type="date" readonly value="{{ date('Y-m-d') }}" class="form-control">

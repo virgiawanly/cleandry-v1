@@ -75,13 +75,13 @@ const submitHandler = async () => {
             title: 'Transaksi Berhasil',
             icon: 'success',
             showCancelButton: true,
-            confirmButtonColor: '#6C757D',
+            confirmButtonColor: '#28A745',
             cancelButtonColor: '#037AFC',
             confirmButtonText: '<i class="fas fa-print mr-1"></i><span>Cetak Faktur</span>',
-            cancelButtonText: 'Transaksi Lagi',
+            cancelButtonText: '<i class="fas fa-sync mr-1"></i><span>Transaksi Lagi</span>',
         });
         if (next.isConfirmed) {
-            document.location.href = `/o/${outletId}/transactions/${res.transaction.id}`;
+            document.location.href = `/o/${outletId}/transactions/${res.transaction.id}/invoice`;
         } else {
             document.location.reload();
         }

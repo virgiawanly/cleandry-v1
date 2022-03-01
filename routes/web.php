@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PageController;
@@ -39,6 +40,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
     Route::get('/users/datatable', [UserController::class, 'datatable'])->name('users.datatable');
     Route::apiResource('/users', UserController::class);
+
+    Route::get('/inventories/datatable', [InventoryController::class, 'datatable'])->name('inventories.datatable');
+    Route::apiResource('/inventories', InventoryController::class);
 });
 
 Route::middleware(['auth', 'outlet'])->prefix('/o/{outlet}')->group(function () {
@@ -51,5 +55,8 @@ Route::middleware(['auth', 'outlet'])->prefix('/o/{outlet}')->group(function () 
 
     Route::get('/transactions/new-transaction', [TransactionController::class, 'newTransaction']);
     Route::get('/transactions/datatable', [TransactionController::class, 'datatable'])->name('transactions.datatable');
+    Route::get('/transactions/{transaction}/invoice', [TransactionController::class, 'invoice'])->name('transactions.invoice');
+    Route::get('/transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
 });

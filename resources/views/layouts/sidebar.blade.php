@@ -46,6 +46,14 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="/inventories" class="nav-link">
+                        <i class="nav-icon fas fa-box-open"></i>
+                        <p>
+                            Kelola Inventaris
+                        </p>
+                    </a>
+                </li>
                 <li class="nav-header">OUTLET</li>
                 @if (Auth::user()->is_super === 1 &&
     request()->session()->has('outlet'))
@@ -89,14 +97,14 @@
                     @if (Auth::user()->is_super)
                         @if (request()->session()->has('outlet'))
                             <a href="/o/{{ request()->session()->get('outlet')->id }}/members" class="nav-link">
-                                <i class="nav-icon fas fa-users"></i>
+                                <i class="nav-icon fas fa-address-book"></i>
                                 <p>
                                     Member
                                 </p>
                             </a>
                         @else
                             <a href="/select-outlet" class="nav-link">
-                                <i class="nav-icon fas fa-users"></i>
+                                <i class="nav-icon fas fa-address-book"></i>
                                 <p>
                                     Member
                                 </p>
@@ -104,43 +112,41 @@
                         @endif
                     @elseif(Auth::user()->outlet_id)
                         <a href="/o/{{ Auth::user()->outlet_id }}/members" class="nav-link">
-                            <i class="nav-icon fas fa-users"></i>
+                            <i class="nav-icon fas fa-address-book"></i>
                             <p>
                                 Member
                             </p>
                         </a>
                     @endif
                 </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-tshirt"></i>
-                        <p>
-                            Cucian
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="/" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Diproses</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Selesai</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Dibatalkan</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
                 <li class="nav-header">TRANSAKSI</li>
+                <li class="nav-item">
+                    @if (Auth::user()->is_super)
+                        @if (request()->session()->has('outlet'))
+                            <a href="/o/{{ request()->session()->get('outlet')->id }}/transactions"
+                                class="nav-link">
+                                <i class="nav-icon fas fa-clipboard-list"></i>
+                                <p>
+                                    Data Transaksi
+                                </p>
+                            </a>
+                        @else
+                            <a href="/select-outlet" class="nav-link">
+                                <i class="nav-icon fas fa-clipboard-list"></i>
+                                <p>
+                                    Data Pesanan
+                                </p>
+                            </a>
+                        @endif
+                    @elseif(Auth::user()->outlet_id)
+                        <a href="/o/{{ Auth::user()->outlet_id }}/transactions" class="nav-link">
+                            <i class="nav-icon fas fa-clipboard-list"></i>
+                            <p>
+                                Data Pesanan
+                            </p>
+                        </a>
+                    @endif
+                </li>
                 <li class="nav-item">
                     @if (Auth::user()->is_super)
                         @if (request()->session()->has('outlet'))
