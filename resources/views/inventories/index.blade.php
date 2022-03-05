@@ -95,7 +95,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="procurement-date">Kuantitas</label>
+                            <label for="procurement-date">Tanggal Pengadaan</label>
                             <input type="date" name="procurement_date" class="form-control" id="procurement-date"
                                 placeholder="Jumlah barang">
                         </div>

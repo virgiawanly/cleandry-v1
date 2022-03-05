@@ -9,6 +9,10 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-header">
+                <div class="d-flex align-items-center justify-content-between my-1">
+                    <h3>Data Transaksi</h3>
+                    <a href="{{ 'transactions/new-transaction' }}" class="btn btn-primary">Transaksi Baru</a>
+                </div>
                 <ul class="nav nav-tabs card-header-tabs">
                     <li class="nav-item active">
                         <label for="status-tab-new">
@@ -36,28 +40,22 @@
                     </li>
                 </ul>
             </div>
-            <div class="card-body">
-                <div class="d-flex align-items-center justify-content-between">
-                    <h3>Data Transaksi</h3>
-                    <a href="{{ 'transactions/new-transaction' }}" class="btn btn-primary">Transaksi Baru</a>
-                </div>
-                <div>
-                    <table class="table table-striped" id="transactions-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Kode Invoice</th>
-                                <th>Nama Pelanggan</th>
-                                <th>Item Cucian</th>
-                                <th>Tgl Pemberian</th>
-                                <th>Est. Selesai</th>
-                                <th>Status Cucian</th>
-                                <th>Status Pembayaran</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
+            <div class="card-body p-0">
+                <table class="table table-striped w-100" id="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Kode Invoice</th>
+                            <th>Nama Pelanggan</th>
+                            <th>Item Cucian</th>
+                            <th>Tgl Pemberian</th>
+                            <th>Est. Selesai</th>
+                            <th>Status Cucian</th>
+                            <th>Status Pembayaran</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>

@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ServicesExport;
+use App\Imports\ServicesImport;
 use App\Models\Outlet;
 use App\Models\Service;
 use App\Models\ServiceType;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class ServiceController extends Controller
@@ -155,5 +159,53 @@ class ServiceController extends Controller
         return response()->json([
             'message' => 'Terjadi kesalahan'
         ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Save services data as excel file.
+     *
+     * @param  \App\Models\Outlet  $outlet
+     * @return \App\Exports\ServicesExport
+     */
+    public function exportExcel(Outlet $outlet)
+    {
+        return (new ServicesExport)->whereOutlet($outlet->id)->download('Layanan-' . date('d-m-Y') . '.xlsx');
+    }
+
+    /**
+     * Save services data as excel file.
+     *
+     * @param  \App\Models\Outlet  $outlet
+     * @return \App\Exports\ServicesExport
+     */
+    public function exportPDF(Outlet $outlet)
+    {
+        $services = Service::where('outlet_id', $outlet->id)->with('outlet')->get();
+
+        $pdf = Pdf::loadView('services.pdf', ['services' => $services, 'outlet' => $outlet]);
+        return $pdf->download('layanan-cleandry-' . date('dmY') . '.pdf');
+    }
+
+    /**
+     * Import services data from xlsx file.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Outlet  $outlet
+     * @return \App\Exports\ServicesExport
+     */
+    public function importExcel(Request $request, Outlet $outlet)
+    {
+        $request->validate([
+            'file_import' => 'required|file|mimes:xlsx'
+        ]);
+
+        Excel::import(new ServicesImport, $request->file('file_import'));
+
+        return redirect()->back();
+    }
+
+    public function downloadTemplate()
+    {
+        return Storage::download('templates/Import_layanan_cleandry.xlsx');
     }
 }

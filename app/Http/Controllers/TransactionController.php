@@ -238,12 +238,4 @@ class TransactionController extends Controller
             ]);
         }
     }
-
-    public function updatePayment(Request $request){
-
-    }
-
-    public function faktur(Request $request, $id){
-        $transaksi = Transaction::findOrFail($id);
-    }
 }

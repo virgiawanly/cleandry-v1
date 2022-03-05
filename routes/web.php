@@ -48,6 +48,9 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'outlet'])->prefix('/o/{outlet}')->group(function () {
     Route::redirect('/', '/');
     Route::get('/services/datatable', [ServiceController::class, 'datatable'])->name('services.datatable');
+    Route::post('/services/import/excel', [ServiceController::class, 'importExcel'])->name('services.import.excel');
+    Route::get('/services/export/excel', [ServiceController::class, 'exportExcel'])->name('services.export.excel');
+    Route::get('/services/export/pdf', [ServiceController::class, 'exportPDF'])->name('services.export.pdf');
     Route::apiResource('/services', ServiceController::class);
 
     Route::get('/members/datatable', [MemberController::class, 'datatable'])->name('members.datatable');
@@ -60,3 +63,5 @@ Route::middleware(['auth', 'outlet'])->prefix('/o/{outlet}')->group(function () 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
 });
+
+Route::get('/download/template/services', [ServiceController::class, 'downloadTemplate'])->name('services.template.download');
