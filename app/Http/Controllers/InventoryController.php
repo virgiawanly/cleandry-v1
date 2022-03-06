@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\InventoriesExport;
+use App\Imports\InventoriesImport;
 use App\Models\Inventory;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class InventoryController extends Controller
@@ -145,5 +150,58 @@ class InventoryController extends Controller
         return response()->json([
             'message' => 'Terjadi kesalahan'
         ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Save inventories data as excel file.
+     *
+     * @return \App\Exports\InventoriesExport
+     */
+    public function exportExcel()
+    {
+        return (new InventoriesExport)->download('Inventaris-' . date('d-m-Y') . '.xlsx');
+    }
+
+    /**
+     * Save inventories data as pdf file.
+     *
+     * @return \Barryvdh\DomPDF\Facade\Pdf
+     */
+    public function exportPDF()
+    {
+        $inventories = Inventory::all();
+
+        $pdf = Pdf::loadView('inventories.pdf', ['inventories' => $inventories]);
+        return $pdf->download('Inventaris-' . date('dmY') . '.pdf');
+    }
+
+    /**
+     * Import services data from xlsx file.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Outlet  $outlet
+     * @return \Illuminate\Http\RedirectResponse;
+     */
+    public function importExcel(Request $request)
+    {
+        $request->validate([
+            'file_import' => 'required|file|mimes:xlsx'
+        ]);
+
+        Excel::import(new InventoriesImport, $request->file('file_import'));
+
+        return response()->json([
+            'message' => 'Import data berhasil'
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * Download excel template.
+     *
+     * @return \Illuminate\Support\Facades\Storage
+     */
+    public function downloadTemplate()
+    {
+        return Storage::download('templates/Import_inventaris_cleandry.xlsx');
     }
 }

@@ -52,11 +52,11 @@ class ServiceController extends Controller
         return DataTables::of($services)
             ->addIndexColumn()
             ->addColumn('actions', function ($service) use ($outlet) {
-                $editBtn = '<button onclick="editHandler(' . "'" . route('services.update', [$outlet->id,  $service->id]) . "'" . ')" class="btn btn-info mx-1">
+                $editBtn = '<button class="btn btn-info mx-1 edit-service-button" data-edit-service-url="' . route('services.update', [$outlet->id,  $service->id]) . '">
                     <i class="fas fa-edit"></i>
                     <span>Edit</span>
                 </button>';
-                $deletBtn = '<button onclick="deleteHandler(' . "'" . route('services.destroy', [$outlet->id,  $service->id]) . "'" . ')" class="btn btn-danger mx-1">
+                $deletBtn = '<button class="btn btn-danger mx-1 delete-service-button" data-delete-service-url="' . route('services.destroy', [$outlet->id,  $service->id]) . '">
                     <i class="fas fa-trash"></i>
                     <span>Hapus</span>
                 </button>';
@@ -173,17 +173,17 @@ class ServiceController extends Controller
     }
 
     /**
-     * Save services data as excel file.
+     * Save services data as pdf file.
      *
      * @param  \App\Models\Outlet  $outlet
-     * @return \App\Exports\ServicesExport
+     * @return \Barryvdh\DomPDF\Facade\Pdf
      */
     public function exportPDF(Outlet $outlet)
     {
         $services = Service::where('outlet_id', $outlet->id)->with('outlet')->get();
 
         $pdf = Pdf::loadView('services.pdf', ['services' => $services, 'outlet' => $outlet]);
-        return $pdf->download('layanan-cleandry-' . date('dmY') . '.pdf');
+        return $pdf->download('Layanan-' . date('dmY') . '.pdf');
     }
 
     /**
@@ -191,7 +191,7 @@ class ServiceController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
-     * @return \App\Exports\ServicesExport
+     * @return \Illuminate\Http\RedirectResponse;
      */
     public function importExcel(Request $request, Outlet $outlet)
     {
@@ -201,9 +201,16 @@ class ServiceController extends Controller
 
         Excel::import(new ServicesImport, $request->file('file_import'));
 
-        return redirect()->back();
+        return response()->json([
+            'message' => 'Import data berhasil'
+        ], Response::HTTP_OK);
     }
 
+    /**
+     * Download excel template.
+     *
+     * @return \Illuminate\Support\Facades\Storage
+     */
     public function downloadTemplate()
     {
         return Storage::download('templates/Import_layanan_cleandry.xlsx');

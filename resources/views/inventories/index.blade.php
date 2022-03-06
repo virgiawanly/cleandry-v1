@@ -11,6 +11,20 @@
                 <div class="card-header">
                     <h3 class="card-title">Data Barang Inventaris</h3>
                     <div class="card-tools">
+                        <div class="dropdown d-inline">
+                            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-upload mr-1"></i>
+                                <span>Export</span>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="{{ route('inventories.export.excel') }}">XLSX</a>
+                                <a class="dropdown-item" href="{{ route('inventories.export.pdf') }}">PDF</a>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#import-modal">
+                            <i class="fas fa-download mr-1"></i><span>Import</span>
+                        </button>
                         <button class="btn btn btn-primary" id="add-inventory-button"
                             data-create-inventory-url="{{ route('inventories.store') }}">
                             <i class="far fa-plus-square mr-1"></i><span>Tambah Barang</span>
@@ -108,158 +122,56 @@
             </div>
         </div>
     </div>
+
+    <!-- Import Modal -->
+    <div class="modal fade" id="import-modal" tabindex="-1" aria-labelledby="import-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="{{ route('inventories.import.excel') }}" method="POST" enctype="multipart/form-data" id="import-form">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="import-modal-label">Import Barang Inventaris</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-none align-items-center justify-content-between bg-white p-2 shadow-md mb-3"
+                            id="import-file-card">
+                            <div class="d-flex align-items-center">
+                                <div class="h1 p-3 mb-0"><i class="fa fa-file-excel"></i></div>
+                                <div>
+                                    <h6 class="mb-0 filename">File.xlsx</h6>
+                                    <div class="text-sm filesize">30kb</div>
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <button type="button" class="close" id="remove-import-file">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center py-5" id="select-import-file">
+                            <div>Upload file</div>
+                            <label for="file-import" class="btn btn-info mt-1 font-weight-normal">
+                                <span>Pilih file</span>
+                            </label>
+                            <div>Klik <a href="{{ route('inventories.template.download') }}">disini</a> untuk
+                                mengunduh
+                                template</div>
+                        </div>
+                        <input type="file" class="custom-file-input" id="file-import" name="file_import" hidden>
+                        <button class="btn btn-primary w-100"><i class="fas fa-download mr-2"></i>Import data</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 @endpush
 
 @push('script')
     @include('layouts.datatable_scripts')
 
     <!-- Page Script -->
-    <script>
-        let table;
-
-        $(function() {
-            table = $('#inventories-table').DataTable({
-                ...DATATABLE_OPTIONS,
-                ajax: '/inventories/datatable',
-                columns: [{
-                        data: 'DT_RowIndex',
-                    },
-                    {
-                        data: 'name',
-                    },
-                    {
-                        data: 'brand',
-                    },
-                    {
-                        data: 'qty',
-                    },
-                    {
-                        data: 'condition',
-                        render: (condition) => {
-                            let text;
-                            let type;
-                            switch (condition) {
-                                case 'good':
-                                    text = 'Bagus / layak pakai';
-                                    type = 'success';
-                                    break;
-                                case 'damaged':
-                                    text = 'Rusak ringan';
-                                    type = 'warning';
-                                    break;
-                                default:
-                                    text = 'Rusak';
-                                    type = 'danger';
-                                    break;
-                            }
-                            return `<span class="badge badge-${type}">${text}</span>`;
-                        }
-                    },
-                    {
-                        data: 'procurement_date',
-                    },
-                    {
-                        data: 'actions',
-                        searchable: false,
-                        sortable: false,
-                    }
-                ]
-            });
-        });
-
-        const createHandler = (url) => {
-            clearErrors();
-            const modal = $('#form-modal');
-            modal.modal('show');
-            modal.find('.modal-title').text('Tambah Barang Inventaris');
-            modal.find('form')[0].reset();
-            modal.find('form').attr('action', url);
-            modal.find('[name=_method]').val('post');
-        }
-
-        const editHandler = async (url) => {
-            clearErrors();
-            const modal = $('#form-modal');
-            modal.modal('show');
-            modal.find('.modal-title').text('Edit Inventaris');
-            modal.find('form')[0].reset();
-            modal.find('form').attr('action', url);
-            modal.find('[name=_method]').val('put');
-            modal.find('input').attr('disabled', true);
-            modal.find('select').attr('disabled', true);
-
-            try {
-                let res = await fetchData(url);
-                modal.find('[name=name]').val(res.inventory.name);
-                modal.find('[name=brand]').val(res.inventory.brand);
-                modal.find('[name=qty]').val(res.inventory.qty);
-                modal.find(`[name=condition][value='${res.inventory.condition}']`).prop('checked', true);
-                modal.find('[name=procurement_date]').val(res.inventory.procurement_date);
-            } catch (err) {
-                console.log(err);
-                toast('Tidak dapat mengambil data', 'error');
-            }
-
-            modal.find('input').attr('disabled', false);
-            modal.find('select').attr('disabled', false);
-        }
-
-        const submitHandler = async () => {
-            event.preventDefault();
-            const url = $('#form-modal form').attr('action');
-            const formData = $('#form-modal form').serialize();
-            try {
-                let res = await $.post(url, formData);
-                $('#form-modal').modal('hide');
-                toast(res.message, 'success');
-                table.ajax.reload();
-            } catch (err) {
-                if (err.status === 422) validationErrorHandler(err.responseJSON.errors);
-                toast('Terjadi kesalahan', 'error');
-            }
-        }
-
-        const deleteHandler = async (url) => {
-            let result = await Swal.fire({
-                title: 'Hapus Outlet',
-                text: 'Anda yakin ingin menghapus outlet ini?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#6C757D',
-                cancelButtonColor: '#037AFC',
-                confirmButtonText: 'Hapus',
-                cancelButtonText: 'Batal',
-            });
-            if (result.isConfirmed) {
-                try {
-                    let res = await $.post(url, {
-                        '_token': $('[name=_token]').val(),
-                        '_method': 'delete'
-                    });
-                    toast(res.message, 'success');
-                    table.ajax.reload();
-                } catch (err) {
-                    toast('Terjadi kesalahan', 'error');
-                }
-            }
-        }
-
-        // Event handlers
-        $('#add-inventory-button').on('click', function() {
-            let url = $(this).data('create-inventory-url');
-            createHandler(url);
-        });
-
-        $('#inventories-table').on('click', '.edit-inventory-button', function() {
-            let url = $(this).data('edit-inventory-url');
-            editHandler(url);
-        });
-
-        $('#inventories-table').on('click', '.delete-inventory-button', function() {
-            let url = $(this).data('delete-inventory-url');
-            deleteHandler(url);
-        });
-
-        $('#inventory-form').on('submit', submitHandler);
-    </script>
+    <script src="{{ asset('js/pages/inventories.js') }}"></script>
 @endpush

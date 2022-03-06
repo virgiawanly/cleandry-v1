@@ -1,11 +1,9 @@
 let table;
-const importUrl = $("meta[name='import-url']").attr("content");
-const outletId = $("meta[name='outlet-id']").attr("content");
 
 $(function () {
-    table = $("#services-table").DataTable({
+    table = $("#inventories-table").DataTable({
         ...DATATABLE_OPTIONS,
-        ajax: `/o/${outletId}/services/datatable`,
+        ajax: "/inventories/datatable",
         columns: [
             {
                 data: "DT_RowIndex",
@@ -14,25 +12,35 @@ $(function () {
                 data: "name",
             },
             {
-                data: "type",
-                render: (type) => (type && type.name ? type.name : "-"),
+                data: "brand",
             },
             {
-                data: "unit",
-                render: (unit) => {
-                    switch (unit) {
-                        case "m":
-                            return "Meter";
-                        case "pcs":
-                            return "Pcs";
+                data: "qty",
+            },
+            {
+                data: "condition",
+                render: (condition) => {
+                    let text;
+                    let type;
+                    switch (condition) {
+                        case "good":
+                            text = "Bagus / layak pakai";
+                            type = "success";
+                            break;
+                        case "damaged":
+                            text = "Rusak ringan";
+                            type = "warning";
+                            break;
                         default:
-                            return "Kilogram";
+                            text = "Rusak";
+                            type = "danger";
+                            break;
                     }
+                    return `<span class="badge badge-${type}">${text}</span>`;
                 },
             },
             {
-                data: "price",
-                render: (price) => formatter.format(price),
+                data: "procurement_date",
             },
             {
                 data: "actions",
@@ -41,18 +49,13 @@ $(function () {
             },
         ],
     });
-    //Initialize Select2 Elements
-    $(".select2").select2({
-        placeholder: "Pilih jenis",
-        theme: "bootstrap4",
-    });
 });
 
 const createHandler = (url) => {
     clearErrors();
     const modal = $("#form-modal");
     modal.modal("show");
-    modal.find(".modal-title").text("Buat Layanan Baru");
+    modal.find(".modal-title").text("Tambah Barang Inventaris");
     modal.find("form")[0].reset();
     modal.find("form").attr("action", url);
     modal.find("[name=_method]").val("post");
@@ -62,7 +65,7 @@ const editHandler = async (url) => {
     clearErrors();
     const modal = $("#form-modal");
     modal.modal("show");
-    modal.find(".modal-title").text("Edit layanan");
+    modal.find(".modal-title").text("Edit Inventaris");
     modal.find("form")[0].reset();
     modal.find("form").attr("action", url);
     modal.find("[name=_method]").val("put");
@@ -71,15 +74,18 @@ const editHandler = async (url) => {
 
     try {
         let res = await fetchData(url);
-        modal.find("[name=name]").val(res.service.name);
-        modal.find("[name=price]").val(res.service.price);
-        modal.find(`[name=type_id]`).val(res.service.type_id).trigger("change");
+        modal.find("[name=name]").val(res.inventory.name);
+        modal.find("[name=brand]").val(res.inventory.brand);
+        modal.find("[name=qty]").val(res.inventory.qty);
         modal
-            .find(`[name=unit][value='${res.service.unit}']`)
+            .find(`[name=condition][value='${res.inventory.condition}']`)
             .prop("checked", true);
+        modal
+            .find("[name=procurement_date]")
+            .val(res.inventory.procurement_date);
     } catch (err) {
+        console.log(err);
         toast("Tidak dapat mengambil data", "error");
-        $("#form-modal").modal("hide");
     }
 
     modal.find("input").attr("disabled", false);
@@ -88,8 +94,8 @@ const editHandler = async (url) => {
 
 const submitHandler = async () => {
     event.preventDefault();
-    let url = $("#form-modal form").attr("action");
-    let formData = $("#form-modal form").serialize();
+    const url = $("#form-modal form").attr("action");
+    const formData = $("#form-modal form").serialize();
     try {
         let res = await $.post(url, formData);
         $("#form-modal").modal("hide");
@@ -103,8 +109,8 @@ const submitHandler = async () => {
 
 const deleteHandler = async (url) => {
     let result = await Swal.fire({
-        title: "Hapus Layanan",
-        text: "Anda yakin ingin menghapus layanan ini?",
+        title: "Hapus Outlet",
+        text: "Anda yakin ingin menghapus outlet ini?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#6C757D",
@@ -168,20 +174,22 @@ const removeImportFile = () => {
 };
 
 // Event handlers
-$("#add-service-button").on("click", function () {
-    let url = $(this).data("create-service-url");
+$("#add-inventory-button").on("click", function () {
+    let url = $(this).data("create-inventory-url");
     createHandler(url);
 });
 
-$("#services-table").on("click", ".edit-service-button", function () {
-    let url = $(this).data("edit-service-url");
+$("#inventories-table").on("click", ".edit-inventory-button", function () {
+    let url = $(this).data("edit-inventory-url");
     editHandler(url);
 });
 
-$("#services-table").on("click", ".delete-service-button", function () {
-    let url = $(this).data("delete-service-url");
+$("#inventories-table").on("click", ".delete-inventory-button", function () {
+    let url = $(this).data("delete-inventory-url");
     deleteHandler(url);
 });
+
+$("#inventory-form").on("submit", submitHandler);
 
 $("#import-form").on("submit", importHandler);
 

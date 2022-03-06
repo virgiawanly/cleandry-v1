@@ -42,6 +42,9 @@ Route::middleware('auth')->group(function () {
     Route::apiResource('/users', UserController::class);
 
     Route::get('/inventories/datatable', [InventoryController::class, 'datatable'])->name('inventories.datatable');
+    Route::post('/inventories/import/excel', [InventoryController::class, 'importExcel'])->name('inventories.import.excel');
+    Route::get('/inventories/export/excel', [InventoryController::class, 'exportExcel'])->name('inventories.export.excel');
+    Route::get('/inventories/export/pdf', [InventoryController::class, 'exportPDF'])->name('inventories.export.pdf');
     Route::apiResource('/inventories', InventoryController::class);
 });
 
@@ -65,3 +68,4 @@ Route::middleware(['auth', 'outlet'])->prefix('/o/{outlet}')->group(function () 
 });
 
 Route::get('/download/template/services', [ServiceController::class, 'downloadTemplate'])->name('services.template.download');
+Route::get('/download/template/inventories', [InventoryController::class, 'downloadTemplate'])->name('inventories.template.download');

@@ -38,8 +38,8 @@
                         <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#import-modal">
                             <i class="fas fa-download mr-1"></i><span>Import</span>
                         </button>
-                        <button class="btn btn btn-primary"
-                            onclick="createHandler('{{ route('services.store', [$outlet->id]) }}')">
+                        <button class="btn btn btn-primary" id="add-service-button"
+                            data-create-service-url="{{ route('services.store', [$outlet->id]) }}">
                             <i class="far fa-plus-square mr-1"></i><span>Tambah layanan</span>
                         </button>
                     </div>
@@ -138,7 +138,7 @@
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="import-modal-label">Modal title</h5>
+                        <h5 class="modal-title" id="import-modal-label">Import Layanan</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
