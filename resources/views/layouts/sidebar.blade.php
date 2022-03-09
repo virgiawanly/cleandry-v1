@@ -192,6 +192,23 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-header">SIMULASI</li>
+                <li class="nav-item">
+                    <a href="/simulation/employee" class="nav-link">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>
+                            Simulasi Karyawan
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/simulation/books" class="nav-link">
+                        <i class="nav-icon fas fa-book"></i>
+                        <p>
+                            Simulasi Data Buku
+                        </p>
+                    </a>
+                </li>
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

@@ -6,6 +6,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\SimulationController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -69,3 +70,6 @@ Route::middleware(['auth', 'outlet'])->prefix('/o/{outlet}')->group(function () 
 
 Route::get('/download/template/services', [ServiceController::class, 'downloadTemplate'])->name('services.template.download');
 Route::get('/download/template/inventories', [InventoryController::class, 'downloadTemplate'])->name('inventories.template.download');
+
+Route::get('/simulation/employee', [SimulationController::class, 'employee']);
+Route::get('/simulation/books', [SimulationController::class, 'books']);
