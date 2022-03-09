@@ -50,7 +50,7 @@
                             <th>Item Cucian</th>
                             <th>Tgl Pemberian</th>
                             <th>Est. Selesai</th>
-                            <th>Status Cucian</th>
+                            <th>Status</th>
                             <th>Status Pembayaran</th>
                             <th></th>
                         </tr>
@@ -150,10 +150,6 @@
                                         <th>Alamat</th>
                                         <td class="td-member-address"></td>
                                     </tr>
-                                    <tr>
-                                        <th>Member Sejak</th>
-                                        <td class="td-member-since"></td>
-                                    </tr>
                                 </table>
                             </div>
                         </div>
@@ -248,125 +244,188 @@
                     }
                 ]
             });
-        });
 
-        $('#transactions-table').on('click', '.detail-button', async function() {
-            let transactionId = $(this).data('id');
-            try {
-                let {
-                    transaction
-                } = await fetchData(`/o/${outletId}/transactions/${transactionId}`);
-                let rows = '';
-                transaction.details.forEach((item, index) => {
-                    rows += `<tr>
+            $('#transactions-table').on('click', '.detail-button', async function() {
+                let transactionId = $(this).data('id');
+                let detailUrl = $(this).data('detail-url');
+                try {
+                    let res = await fetchData(detailUrl);
+                    let transaction = res.transaction;
+                    let rows = '';
+
+                    transaction.details.forEach((item, index) => {
+                        rows += `<tr>
                             <td>${++index}</td>
                             <td>${item.service_name_history}</td>
                             <td>${item.price_history}</td>
                             <td>${item.qty}</td>
                             <td>${item.qty * item.price_history}</td>
                         </tr>`;
-                });
+                    });
 
-                rows += `<tr>
+                    rows += `<tr>
                             <td colspan="4">Total Harga</td>
                             <td>${formatter.format(transaction.total_price)}</td>
                         </tr>`;
 
-                if (transaction.payment_status == 'paid') {
-                    rows += `<tr>
+                    if (transaction.payment_status == 'paid') {
+                        rows += `<tr>
                             <td colspan="4">Diskon</td>
                             <td>${formatter.format(transaction.total_discount)}</td>
                         </tr>`;
-                    rows += `<tr>
+                        rows += `<tr>
                             <td colspan="4">Pajak</td>
                             <td>${formatter.format(transaction.total_tax)}</td>
                         </tr>`;
-                    rows += `<tr>
+                        rows += `<tr>
                             <td colspan="4">Biaya Tambahan</td>
                             <td>${formatter.format(transaction.additional_cost)}</td>
                         </tr>`;
-                    rows += `<tr>
+                        rows += `<tr>
                             <th colspan="4">Total</th>
                             <td>${formatter.format(transaction.total_payment)}</td>
                         </tr>`;
+                    }
+
+                    $('#transaction-info-table').find('.td-transaction-invoice')
+                        .text(transaction.invoice);
+
+                    $('#transaction-info-table').find('.td-transaction-member-name')
+                        .html(`<label for="modal-tab-member" class="mb-0 text-primary">
+                                ${transaction.member.name}
+                            <i class="fas fa-external-link-alt ml-1"></i></label>`);
+
+                    $('#transaction-info-table').find('.td-transaction-date').text(transaction.date);
+
+                    $('#transaction-info-table').find('.td-transaction-deadline')
+                        .text(transaction.deadline);
+
+                    let paymentStatusType = transaction.payment_status == 'paid' ? 'success' :
+                        'secondary';
+                    let paymentStatusText = transaction.payment_status == 'paid' ? 'Dibayar' :
+                        'Belum dibayar';
+
+                    $('#transaction-info-table').find('.td-transaction-payment-status')
+                        .html(`<span class="font-weight-bold text-${paymentStatusType}">
+                                ${paymentStatusText}
+                            </span>`);
+
+                    $('#transaction-member-info').find('.td-member-name').text(transaction.member.name);
+
+                    $('#transaction-member-info').find('.td-member-phone')
+                        .text(transaction.member.phone);
+
+                    $('#transaction-member-info').find('.td-member-address')
+                        .text(transaction.member.address);
+
+                    $('#transaction-items-table tbody').html(rows);
+
+                    if (transaction.payment_status == 'paid') {
+                        $('#transaction-detail-modal').find('#button-container')
+                            .html(`<a href="/o/${outletId}/transactions/${transaction.id}/invoice" class="btn btn-success w-100 mt-2 mb-0 print-invoice-button">
+                                <i class="fas fa-print mr-1"></i>
+                                <span>Cetak Invoice</span>
+                            </a>`);
+                    } else {
+                        $('#transaction-detail-modal').find('#button-container')
+                            .html(`<button data-id="${transactionId}" class="btn btn-success w-100 mt-2 mb-0 update-payment-button">
+                                <i class="fas fa-cash-register mr-1"></i>
+                                <span>Bayar Sekarang</span>
+                            </button>`);
+                    }
+
+                    $('[name="modal_tab"][value="items"]').attr('checked', true).trigger('change');
+                    $('#transaction-detail-modal').modal('show');
+                } catch (err) {
+                    toast('error', 'Terjadi kesalahan');
+                    $('#transaction-detail-modal').modal('hide');
                 }
-
-                $('#transaction-info-table').find('.td-transaction-invoice').text(transaction.invoice);
-                $('#transaction-info-table').find('.td-transaction-member-name').html(
-                    `<label for="modal-tab-member" class="mb-0 text-primary">${transaction.member.name}<i class="fas fa-external-link-alt ml-1"></i></label>`
-                );
-                $('#transaction-info-table').find('.td-transaction-date').text(transaction.date);
-                $('#transaction-info-table').find('.td-transaction-deadline').text(transaction.deadline);
-                let paymentStatusType = transaction.payment_status == 'paid' ? 'success' : 'secondary';
-                let paymentStatusText = transaction.payment_status == 'paid' ? 'Dibayar' : 'Belum dibayar';
-                $('#transaction-info-table').find('.td-transaction-payment-status').html(
-                    `<span class="font-weight-bold text-${paymentStatusType}">${paymentStatusText}</span>`);
-                $('#transaction-member-info').find('.td-member-name').text(transaction.member.name);
-                $('#transaction-member-info').find('.td-member-phone').text(transaction.member.phone);
-                $('#transaction-member-info').find('.td-member-address').text(transaction.member.address);
-                $('#transaction-member-info').find('.td-member-since').text(transaction.member.created_at);
-                $('#transaction-items-table tbody').html(rows);
-
-                if (transaction.payment_status == 'paid') {
-                    $('#transaction-detail-modal').find('#button-container').html(
-                        `<a href="/o/${outletId}/transactions/${transaction.id}/invoice" class="btn btn-success w-100 mt-2 mb-0 print-invoice-button">
-                            <i class="fas fa-print mr-1"></i>
-                            <span>Cetak Invoice</span>
-                        </a>`);
-                } else {
-
-                }
-                $('[name="modal_tab"][value="items"]').attr('checked', true).trigger('change');
-
-                $('#transaction-detail-modal').modal('show');
-            } catch (err) {
-                toast('error', 'Terjadi kesalahan');
-                $('#transaction-detail-modal').modal('hide');
-            }
-        });
-
-        $('[name="modal_tab"]').on('change', function() {
-            if ($(this).val() == 'member') {
-                $('.nav-link.tab-member').addClass('active');
-                $('.nav-link.tab-items').removeClass('active');
-                $('#transaction-member-info').removeClass('d-none');
-                $('#transaction-items-info').removeClass('d-block');
-                $('#transaction-member-info').addClass('d-block');
-                $('#transaction-items-info').addClass('d-none');
-            } else {
-                $('.nav-link.tab-member').removeClass('active');
-                $('.nav-link.tab-items').addClass('active');
-                $('#transaction-member-info').addClass('d-none');
-                $('#transaction-member-info').removeClass('d-block');
-                $('#transaction-items-info').addClass('d-block');
-                $('#transaction-items-info').removeClass('d-none');
-            }
-        });
-
-        $('[name="status_tab"]').on('change', function() {
-            console.log('ok');
-            let status = $(this).val();
-            console.log(status);
-            $.each($('.nav-link-status'), (i, el) => {
-                $(el).removeClass('active');
             });
 
-            switch (status) {
-                case 'process':
-                    $('.nav-link.status-process').addClass('active');
-                    break;
-                case 'done':
-                    $('.nav-link.status-done').addClass('active');
-                    break;
-                case 'taken':
-                    $('.nav-link.status-taken').addClass('active');
-                    break;
-                default:
-                    status = 'new';
-                    $('.nav-link.status-new').addClass('active');
-                    break;
-            }
-            table.ajax.url(`${datatableUrl}?status=${status}`).load();
+            $('[name="modal_tab"]').on('change', function() {
+                if ($(this).val() == 'member') {
+                    $('.nav-link.tab-member').addClass('active');
+                    $('.nav-link.tab-items').removeClass('active');
+                    $('#transaction-member-info').removeClass('d-none');
+                    $('#transaction-items-info').removeClass('d-block');
+                    $('#transaction-member-info').addClass('d-block');
+                    $('#transaction-items-info').addClass('d-none');
+                } else {
+                    $('.nav-link.tab-member').removeClass('active');
+                    $('.nav-link.tab-items').addClass('active');
+                    $('#transaction-member-info').addClass('d-none');
+                    $('#transaction-member-info').removeClass('d-block');
+                    $('#transaction-items-info').addClass('d-block');
+                    $('#transaction-items-info').removeClass('d-none');
+                }
+            });
+
+            $('[name="status_tab"]').on('change', function() {
+                console.log('ok');
+                let status = $(this).val();
+                console.log(status);
+                $.each($('.nav-link-status'), (i, el) => {
+                    $(el).removeClass('active');
+                });
+
+                switch (status) {
+                    case 'process':
+                        $('.nav-link.status-process').addClass('active');
+                        break;
+                    case 'done':
+                        $('.nav-link.status-done').addClass('active');
+                        break;
+                    case 'taken':
+                        $('.nav-link.status-taken').addClass('active');
+                        break;
+                    default:
+                        status = 'new';
+                        $('.nav-link.status-new').addClass('active');
+                        break;
+                }
+                table.ajax.url(`${datatableUrl}?status=${status}`).load();
+            });
+
+            $('#transactions-table').on('click', '.update-status-button', async function() {
+                let message = '';
+                let url = $(this).data('update-url');
+                console.log(url);
+                switch ($(this).data('status')) {
+                    case 'new':
+                        message = 'Ubah status cucian ke "Proses"?';
+                        break;
+                    case 'process':
+                        message = 'Tandai cucian sebagai "Selesai"?';
+                        break;
+                    case 'done':
+                        message = 'Tandai cucian sebagai "Sudah diambil"?';
+                        break;
+                    default:
+                        message = ''
+                }
+                let result = await Swal.fire({
+                    title: "Proses Transaksi",
+                    text: message,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Proses",
+                    cancelButtonText: "Batal",
+                });
+                if (result.isConfirmed) {
+                    try {
+                        let res = await $.post(url, {
+                            _token: $("[name=_token]").val(),
+                            _method: "PUT",
+                        });
+                        toast(res.message, "success");
+                        table.ajax.reload();
+                        console.log(res);
+                    } catch (err) {
+                        console.log(err.responseJSON);
+                        toast("Terjadi kesalahan", "error");
+                    }
+                }
+            })
         });
     </script>
 @endpush

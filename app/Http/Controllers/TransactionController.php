@@ -15,7 +15,6 @@ use Yajra\DataTables\DataTables;
 
 class TransactionController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -66,23 +65,38 @@ class TransactionController extends Controller
 
         $transactions = Transaction::with(['user', 'member', 'details'])->where('outlet_id', $outlet->id)->when($status, function ($query) use ($status) {
             return $query->where('status', $status);
-        })->get();
+        })->orderBy('id', 'desc')->get();
 
         return DataTables::of($transactions)
             ->addIndexColumn()
+            ->editColumn('date', function ($transaction) {
+                return date('d/m/Y', strtotime($transaction->date));
+            })
+            ->editColumn('deadline', function ($transaction) {
+                return date('d/m/Y', strtotime($transaction->deadline));
+            })
             ->addColumn('total_item', function ($transaction) {
                 return $transaction->details()->count();
             })
-            ->addColumn('actions', function ($transaction) {
+            ->addColumn('actions', function ($transaction) use ($outlet) {
                 $buttons = '';
                 if ($transaction->payment_status === 'unpaid') {
-                    $buttons .= '<button class="btn btn-success m-1 pay-button"><i class="fas fa-cash-register mr-1"></i><span>Bayar</span></button>';
+                    $buttons .= '<button class="btn btn-success d-block m-1 pay-button"><i class="fas fa-cash-register mr-1"></i><span>Bayar</span></button>';
                 }
-                $buttons .= '<button class="btn btn-info m-1 detail-button" data-id="' . $transaction->id . '"><i class="fas fa-eye mr-1"></i><span>Detail</span></button>';
+                if ($transaction->status !== 'taken') {
+                    $buttons .= '<button class="btn btn-success d-block m-1 update-status-button" data-update-url="' . route('transactions.updateStatus', [$outlet->id, $transaction->id]) . '" data-status="' . $transaction->status . '"><i class="fas fa-arrow-circle-right mr-1"></i><span>Proses</span></button>';
+                }
+                $buttons .= '<button class="btn btn-info d-block m-1 detail-button" data-detail-url="' . route('transactions.show', [$outlet->id, $transaction->id]) . '"><i class="fas fa-eye mr-1"></i><span>Detail</span></button>';
                 return $buttons;
             })->rawColumns(['actions'])->make(true);
     }
 
+    /**
+     * Show new transaction form.
+     *
+     * @param  \App\Models\Outlet  $outlet
+     * @return \Illuminate\Http\Response
+     */
     public function newTransaction(Request $request, Outlet $outlet)
     {
         return view('transactions.new_transaction', [
@@ -131,6 +145,7 @@ class TransactionController extends Controller
             $request->validate($rules);
 
             $transactionDate = date('Y-m-d');
+
             $payload = [
                 'outlet_id' => Auth::user()->is_super ? session()->get('outlet')->id : Auth::user()->outlet_id,
                 'user_id' => Auth::id(),
@@ -192,6 +207,8 @@ class TransactionController extends Controller
     public function show(Outlet $outlet, Transaction $transaction)
     {
         $transaction->load(['details', 'outlet', 'user', 'member']);
+        $transaction['date'] = date('d/m/Y', strtotime($transaction->date));
+        $transaction['deadline'] = date('d/m/Y', strtotime($transaction->deadline));
         $transaction['total_discount'] = $transaction->getTotalDiscount();
         $transaction['total_price'] = $transaction->getTotalPrice();
         $transaction['total_tax'] = $transaction->getTotalTax();
@@ -237,5 +254,34 @@ class TransactionController extends Controller
                 'transaction' => $transaction
             ]);
         }
+    }
+
+
+    /**
+     * Update transaction status.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function updateStatus(Outlet $outlet, Transaction $transaction)
+    {
+        switch ($transaction->status) {
+            case 'new':
+                $transaction->status = 'process';
+                break;
+            case 'process':
+                $transaction->status = 'done';
+                break;
+            case 'done':
+                $transaction->status = 'taken';
+                break;
+            default:
+                $transaction->status = 'new';
+        }
+        $transaction->save();
+
+        return response()->json([
+            'message' => 'Status transaksi berhasil diupdate',
+            'status' => $transaction->status
+        ], Response::HTTP_OK);
     }
 }

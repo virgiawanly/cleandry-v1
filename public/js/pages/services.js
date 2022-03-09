@@ -41,11 +41,43 @@ $(function () {
             },
         ],
     });
+
     //Initialize Select2 Elements
     $(".select2").select2({
         placeholder: "Pilih jenis",
         theme: "bootstrap4",
     });
+
+    // Event handlers
+    $("#add-service-button").on("click", function () {
+        let url = $(this).data("create-service-url");
+        createHandler(url);
+    });
+
+    $("#services-table").on("click", ".edit-service-button", function () {
+        let url = $(this).data("edit-service-url");
+        editHandler(url);
+    });
+
+    $("#services-table").on("click", ".delete-service-button", function () {
+        let url = $(this).data("delete-service-url");
+        deleteHandler(url);
+    });
+
+    $("#import-form").on("submit", importHandler);
+
+    $('[name="file_import"]').on("change", () => {
+        let filename = $("#file-import")[0].files[0].name;
+        let filesize = $("#file-import")[0].files[0].size;
+        $(".filename").text(filename ?? "");
+        $(".filesize").text(formatBytes(filesize) ?? "");
+        $("#import-file-card").removeClass("d-none");
+        $("#import-file-card").addClass("d-flex");
+        $("#select-import-file").addClass("d-none");
+        $("#select-import-file").removeClass("d-block");
+    });
+
+    $("#remove-import-file").on("click", removeImportFile);
 });
 
 const createHandler = (url) => {
@@ -166,34 +198,3 @@ const removeImportFile = () => {
     $("#select-import-file").removeClass("d-none");
     $("#select-import-file").addClass("d-block");
 };
-
-// Event handlers
-$("#add-service-button").on("click", function () {
-    let url = $(this).data("create-service-url");
-    createHandler(url);
-});
-
-$("#services-table").on("click", ".edit-service-button", function () {
-    let url = $(this).data("edit-service-url");
-    editHandler(url);
-});
-
-$("#services-table").on("click", ".delete-service-button", function () {
-    let url = $(this).data("delete-service-url");
-    deleteHandler(url);
-});
-
-$("#import-form").on("submit", importHandler);
-
-$('[name="file_import"]').on("change", () => {
-    let filename = $("#file-import")[0].files[0].name;
-    let filesize = $("#file-import")[0].files[0].size;
-    $(".filename").text(filename ?? "");
-    $(".filesize").text(formatBytes(filesize) ?? "");
-    $("#import-file-card").removeClass("d-none");
-    $("#import-file-card").addClass("d-flex");
-    $("#select-import-file").addClass("d-none");
-    $("#select-import-file").removeClass("d-block");
-});
-
-$("#remove-import-file").on("click", removeImportFile);
