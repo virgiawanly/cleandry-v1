@@ -81,12 +81,12 @@ class TransactionController extends Controller
             ->addColumn('actions', function ($transaction) use ($outlet) {
                 $buttons = '';
                 if ($transaction->payment_status === 'unpaid') {
-                    $buttons .= '<button class="btn btn-success d-block m-1 pay-button"><i class="fas fa-cash-register mr-1"></i><span>Bayar</span></button>';
+                    $buttons .= '<button class="btn btn-success btn-sm m-1 update-payment-button" data-detail-url="' . route('transactions.show', [$outlet->id, $transaction->id]) . '" data-update-payment-url="' . route('transactions.updatePayment', [$outlet->id, $transaction->id]) . '"><i class="fas fa-cash-register mr-1"></i><span>Bayar</span></button>';
                 }
                 if ($transaction->status !== 'taken') {
-                    $buttons .= '<button class="btn btn-success d-block m-1 update-status-button" data-update-url="' . route('transactions.updateStatus', [$outlet->id, $transaction->id]) . '" data-status="' . $transaction->status . '"><i class="fas fa-arrow-circle-right mr-1"></i><span>Proses</span></button>';
+                    $buttons .= '<button class="btn btn-primary btn-sm m-1 update-status-button" data-update-url="' . route('transactions.updateStatus', [$outlet->id, $transaction->id]) . '" data-status="' . $transaction->status . '"><i class="fas fa-arrow-circle-right mr-1"></i><span>Proses</span></button>';
                 }
-                $buttons .= '<button class="btn btn-info d-block m-1 detail-button" data-detail-url="' . route('transactions.show', [$outlet->id, $transaction->id]) . '"><i class="fas fa-eye mr-1"></i><span>Detail</span></button>';
+                $buttons .= '<button class="btn btn-info btn-sm m-1 detail-button" data-detail-url="' . route('transactions.show', [$outlet->id, $transaction->id]) . '"><i class="fas fa-eye mr-1"></i><span>Detail</span></button>';
                 return $buttons;
             })->rawColumns(['actions'])->make(true);
     }
@@ -256,10 +256,11 @@ class TransactionController extends Controller
         }
     }
 
-
     /**
      * Update transaction status.
      *
+     * @param  \App\Models\Outlet
+     * @param  \App\Models\Transaction
      * @return \Illuminate\Http\Response
      */
     public function updateStatus(Outlet $outlet, Transaction $transaction)
@@ -282,6 +283,35 @@ class TransactionController extends Controller
         return response()->json([
             'message' => 'Status transaksi berhasil diupdate',
             'status' => $transaction->status
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * Update transaction payment status.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function updatePayment(Request $request, Outlet $outlet, Transaction $transaction)
+    {
+        $request->validate([
+            'discount' => 'required|min:0',
+            'discount_type' => 'in:percent,nominal',
+            'tax' => 'required|min:0',
+            'additional_cost' => 'required|min:0',
+        ]);
+
+        if ($transaction->payment_status === 'unpaid') {
+            $transaction->update([
+                'payment_status' => 'paid',
+                'discount' => $request->discount,
+                'discount_type' => $request->discount_type,
+                'tax' => $request->tax,
+                'additional_cost' => $request->additional_cost,
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Pembayaran berhasil',
         ], Response::HTTP_OK);
     }
 }

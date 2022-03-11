@@ -84,8 +84,10 @@
                     </ol>
                 </div>
                 <div class="col-6">
-                    <p class="lead">Dibayar Pada
-                        {{ date('d/m/Y', strtotime($transaction->payment_date)) }}</p>
+                    @if ($transaction->payment_status == 'paid')
+                        <p class="lead">Dibayar Pada
+                            {{ date('d/m/Y', strtotime($transaction->payment_date)) }}</p>
+                    @endif
                     <div class="table-responsive">
                         <table class="table">
                             <tr>
