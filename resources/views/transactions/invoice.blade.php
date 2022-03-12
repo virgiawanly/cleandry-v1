@@ -102,12 +102,14 @@
                         <div class="col-12">
                             <a href="?print=true" rel="noopener" target="_blank" class="btn btn-default"><i
                                     class="fas fa-print"></i> Print</a>
-                            <button type="button" class="btn btn-success float-right" style="margin-right: 5px;">
+                            <a href="{{ route('transactions.sendWhatsapp', [$transaction->outlet->id, $transaction->id]) }}"
+                                class="btn btn-success float-right" style="margin-right: 5px;">
                                 <i class="fab fa-whatsapp"></i> Kirim Whatsapp
-                            </button>
-                            <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
+                            </a>
+                            <a href="{{ route('transactions.invoicePDF', [$transaction->outlet->id, $transaction->id]) }}"
+                                class="btn btn-primary float-right" style="margin-right: 5px;">
                                 <i class="fas fa-file-pdf"></i> Download PDF
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>

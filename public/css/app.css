@@ -1,9 +1,130 @@
+* {
+    font-family: 'Lato';
+}
+
+/* Sidebar */
+.main-sidebar {
+    background: #1f9c62;
+    box-shadow: none;
+}
+
+.main-sidebar .brand-link {
+    border: none;
+}
+
+.main-sidebar .sidebar .nav-header {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.8em;
+    letter-spacing: 2px;
+}
+
+.main-sidebar .sidebar .nav-item .nav-link {
+    display: flex;
+    align-items: center;
+    color: #d2e7d9;
+    padding: 10px 15px;
+    border-radius: 8px;
+}
+
+.main-sidebar .sidebar .nav-item .nav-link .nav-icon {
+    color: #ffffff;
+    width: 25px;
+}
+
+.main-sidebar .sidebar .nav-item .nav-link p {
+    padding-left: 10px;
+}
+
+.main-sidebar .sidebar .nav-item .nav-link.active .nav-icon {
+    color: #39B152;
+}
+
+.main-sidebar .sidebar .nav-item .nav-link.active {
+    color: #39B152;
+    box-shadow: none;
+    background-color: #ffffff;
+}
+/* End Sidebar */
+
+/* Navbar */
+.main-header.navbar {
+    border: none;
+    background-color: #FCFCFC;
+}
+/* End Navbar */
+
+/* Footer */
+.main-footer {
+    border: none;
+    box-sizing: none;
+}
+/* End Footer */
+
+/* Content Wrapper */
+.content-wrapper {
+    background-color: #FCFCFC;
+}
+
+/* Card */
+.card {
+    box-shadow: 0px 3px 10px 0 rgba(0, 0, 0, 0.05);
+}
+/* End Card */
+
+/* Table */
 .dataTables_wrapper .row:not(:nth-child(2)) {
     padding: 20px 25px;
 }
+
 .dataTables_wrapper td:first-child {
     padding-left: 20px;
 }
+
 .dataTables_wrapper td:last-child {
     padding-right: 20px;
+}
+
+.table-striped tr.odd {
+    background-color: rgba(50, 59, 56, 0.03) !important;
+}
+
+.table-striped tr:hover {
+    background-color: rgba(50, 59, 56, 0.05) !important;
+}
+/* End Table */
+
+.btn.btn-primary {
+    background-color: #1F9C62;
+    border: #1F9C62;
+}
+
+.btn.btn-primary:hover,
+.btn.btn-primary:focus,
+.btn.btn-primary:active
+{
+    background-color: #1c8353;
+}
+
+.btn.btn-warning {
+    background-color: #FFD765;
+    border: #FFD765;
+}
+
+.btn.btn-warning:hover,
+.btn.btn-warning:focus,
+.btn.btn-warning:active
+{
+    background-color: #e9bf4c;
+}
+
+.btn.btn-danger {
+    background-color: #eb3c3c;
+    border: #eb3c3c;
+}
+
+.btn.btn-danger:hover,
+.btn.btn-danger:focus,
+.btn.btn-danger:active
+{
+    background-color: #cf2b2b;
 }

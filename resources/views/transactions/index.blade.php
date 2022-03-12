@@ -9,8 +9,8 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-header">
-                <div class="d-flex align-items-center justify-content-between my-1">
-                    <h3>Data Transaksi</h3>
+                <div class="d-flex align-items-center justify-content-between my-1 pb-3">
+                    <h5 class="card-title">Data Transaksi</h5>
                     <a href="{{ 'transactions/new-transaction' }}" class="btn btn-primary"><i class="fas fa-cash-register mr-1"></i><span>Transaksi Baru</span></a>
                 </div>
                 <ul class="nav nav-tabs card-header-tabs">

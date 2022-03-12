@@ -7,6 +7,7 @@ use App\Models\Member;
 use App\Models\Outlet;
 use App\Models\Service;
 use App\Models\Transaction;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -257,6 +258,21 @@ class TransactionController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\Transaction  $transaction
+     * @return \Illuminate\Http\Response
+     */
+    public function invoicePDF(Outlet $outlet, Transaction $transaction)
+    {
+        $pdf = Pdf::loadView('transactions.invoice_pdf', [
+            'transaction' => $transaction
+        ]);
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->stream();
+    }
+
+    /**
      * Update transaction status.
      *
      * @param  \App\Models\Outlet
@@ -313,5 +329,35 @@ class TransactionController extends Controller
         return response()->json([
             'message' => 'Pembayaran berhasil',
         ], Response::HTTP_OK);
+    }
+
+    public function sendWhatsapp(Outlet $outlet, Transaction $transaction)
+    {
+        $transaction->load('details', 'details.service');
+
+        $text = 'Yth. Pelanggan Cleandry,
+        Kami informasikan bahwa cucian anda yang kami terima pada tanggal *' . date('d-m-Y', strtotime($transaction->date)) . '*';
+
+        switch ($transaction->status) {
+            case 'new' || 'process':
+                $text .= ' sedang dalam proses pencucian.';
+                break;
+            case 'done':
+                $text .= ' *siap untuk diambil*.';
+                break;
+            default:
+                $text .= ' sudah diambil.';
+                break;
+        }
+
+        $text .= ' Dengan rincian layanan sebagai berikut :';
+
+        foreach ($transaction->details as $detail) {
+            $text .= $detail->qty . 'x ' . $detail->service->name;
+        }
+
+        $redirectTo = 'https://wa.me/' . $transaction->member->phone;
+        // dd($redirectTo);
+        return redirect()->to($redirectTo)->with('text', $text);
     }
 }

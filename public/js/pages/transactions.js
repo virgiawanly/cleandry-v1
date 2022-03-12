@@ -120,9 +120,9 @@ $(function () {
                         </tr>`;
                 rows += `<tr>
                             <th colspan="4">Total</th>
-                            <td>${formatter.format(
+                            <th>${formatter.format(
                                 transaction.total_payment
-                            )}</td>
+                            )}</th>
                         </tr>`;
             }
 

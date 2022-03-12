@@ -65,6 +65,8 @@ Route::middleware(['auth', 'outlet'])->prefix('/o/{outlet}')->group(function () 
     Route::put('/transactions/{transaction}/status', [TransactionController::class, 'updateStatus'])->name('transactions.updateStatus');
     Route::put('/transactions/{transaction}/payment', [TransactionController::class, 'updatePayment'])->name('transactions.updatePayment');
     Route::get('/transactions/{transaction}/invoice', [TransactionController::class, 'invoice'])->name('transactions.invoice');
+    Route::get('/transactions/{transaction}/invoice/pdf', [TransactionController::class, 'invoicePDF'])->name('transactions.invoicePDF');
+    Route::get('/transactions/{transaction}/whatsapp', [TransactionController::class, 'sendWhatsapp'])->name('transactions.sendWhatsapp');
     Route::get('/transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
