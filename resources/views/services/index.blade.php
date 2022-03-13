@@ -19,7 +19,7 @@
                         <div class="text-sm">Outlet : {{ $outlet->name }}</div>
                     </div>
                     <div class="card-tools">
-                        @if (Auth::user()->is_super)
+                        @if (Auth::user()->role === 'admin')
                             <a href="/select-outlet" class="btn btn-info"><i class="fas fa-exchange-alt mr-1"></i>Ganti
                                 Outlet</a>
                         @endif

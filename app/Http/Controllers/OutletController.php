@@ -60,7 +60,7 @@ class OutletController extends Controller
             'outlet_id' => 'required',
         ]);
 
-        if (Auth::user()->is_super) {
+        if (Auth::user()->role === 'admin') {
             $outlet = Outlet::find($request->outlet_id);
             $request->session()->put('outlet', $outlet);
         }

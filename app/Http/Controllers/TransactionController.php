@@ -148,7 +148,7 @@ class TransactionController extends Controller
             $transactionDate = date('Y-m-d');
 
             $payload = [
-                'outlet_id' => Auth::user()->is_super ? session()->get('outlet')->id : Auth::user()->outlet_id,
+                'outlet_id' => Auth::user()->role === 'admin' ? session()->get('outlet')->id : Auth::user()->outlet_id,
                 'user_id' => Auth::id(),
                 'member_id' => $request->member_id,
                 'invoice' => Transaction::createInvoice(),

@@ -22,7 +22,6 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('rahasiabanget'),
             'phone' => '089530713889',
             'outlet_id' => 1,
-            'is_super' => 1
         ]);
 
         User::create([
@@ -31,7 +30,6 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('rahasiabanget'),
             'phone' => '0895404922800',
             'outlet_id' => null,
-            'is_super' => 0
         ]);
 
         ServiceType::insert([

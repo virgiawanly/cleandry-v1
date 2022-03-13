@@ -183,7 +183,7 @@ class ServiceController extends Controller
         $services = Service::where('outlet_id', $outlet->id)->with('outlet')->get();
 
         $pdf = Pdf::loadView('services.pdf', ['services' => $services, 'outlet' => $outlet]);
-        return $pdf->download('Layanan-' . date('dmY') . '.pdf');
+        return $pdf->stream('Layanan-' . date('dmY') . '.pdf');
     }
 
     /**

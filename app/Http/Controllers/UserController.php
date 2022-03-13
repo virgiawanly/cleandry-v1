@@ -53,7 +53,7 @@ class UserController extends Controller
      */
     public function datatable()
     {
-        $users = User::with('outlet')->regular()->get();
+        $users = User::with('outlet')->where('id', '!=', 1)->get();
 
         return DataTables::of($users)
             ->addIndexColumn()

@@ -20,5 +20,10 @@ class Member extends Model
         'email',
         'address',
         'gender',
+        'outlet_id'
     ];
+
+    public function outlet() {
+        return $this->belongsTo(Outlet::class);
+    }
 }

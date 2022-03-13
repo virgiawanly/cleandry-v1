@@ -116,7 +116,7 @@ $(function () {
 
     membersTable = $("#members-table").DataTable({
         ...DATATABLE_OPTIONS,
-        ajax: `/o/${outletId}/members/datatable`,
+        ajax: `/o/${outletId}/transactions/new-transaction/get-members`,
         columns: [
             {
                 data: "DT_RowIndex",
@@ -140,7 +140,7 @@ $(function () {
     });
 
     servicesTable = $("#services-table").DataTable({
-        ajax: `/o/${outletId}/services/datatable`,
+        ajax: `/o/${outletId}/transactions/new-transaction/get-services`,
         columns: [
             {
                 data: "DT_RowIndex",

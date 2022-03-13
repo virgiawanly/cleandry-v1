@@ -48,7 +48,7 @@
                     </a>
                 </li>
                 <li class="nav-header">OUTLET</li>
-                @if (Auth::user()->is_super === 1 &&
+                @if (Auth::user()->role === 'admin' &&
     request()->session()->has('outlet'))
                     <li class="nav-item">
                         <a href="/select-outlet" class="nav-link">
@@ -60,7 +60,7 @@
                     </li>
                 @endif
                 <li class="nav-item">
-                    @if (Auth::user()->is_super)
+                    @if (Auth::user()->role === 'admin')
                         @if (request()->session()->has('outlet'))
                             <a href="/o/{{ request()->session()->get('outlet')->id }}/services"
                                 class="nav-link">
@@ -87,7 +87,7 @@
                     @endif
                 </li>
                 <li class="nav-item">
-                    @if (Auth::user()->is_super)
+                    @if (Auth::user()->role === 'admin')
                         @if (request()->session()->has('outlet'))
                             <a href="/o/{{ request()->session()->get('outlet')->id }}/members" class="nav-link">
                                 <ion-icon class="nav-icon" name="people-circle-outline"></ion-icon>
@@ -114,7 +114,7 @@
                 </li>
                 <li class="nav-header">TRANSAKSI</li>
                 <li class="nav-item">
-                    @if (Auth::user()->is_super)
+                    @if (Auth::user()->role === 'admin')
                         @if (request()->session()->has('outlet'))
                             <a href="/o/{{ request()->session()->get('outlet')->id }}/transactions"
                                 class="nav-link">
@@ -141,7 +141,7 @@
                     @endif
                 </li>
                 <li class="nav-item">
-                    @if (Auth::user()->is_super)
+                    @if (Auth::user()->role === 'admin')
                         @if (request()->session()->has('outlet'))
                             <a href="/o/{{ request()->session()->get('outlet')->id }}/transactions/new-transaction"
                                 class="nav-link">

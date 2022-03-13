@@ -4,15 +4,6 @@
         <li class="nav-item">
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
-        {{-- <li class="nav-item d-none d-sm-inline-block">
-            <a href="/" class="nav-link">Dashboard</a>
-        </li>
-        @if (Auth::user()->is_super === 1 &&
-        request()->session()->has('outlet'))
-        <li class="nav-item d-none d-sm-inline-block">
-            <a href="/select-outlet" class="nav-link">Outlet</a>
-        </li>
-        @endif --}}
     </ul>
 
     <!-- Right navbar links -->

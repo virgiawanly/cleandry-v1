@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\MembersExport;
+use App\Imports\MembersImport;
 use App\Models\Member;
 use App\Models\Outlet;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class MemberController extends Controller
@@ -154,5 +159,60 @@ class MemberController extends Controller
         return response()->json([
             'message' => 'Terjadi kesalahan'
         ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Save members data as excel file.
+     *
+     * @param  \App\Models\Outlet  $outlet
+     * @return \App\Exports\MembersExport
+     */
+    public function exportExcel(Outlet $outlet)
+    {
+        return (new MembersExport)->whereOutlet($outlet->id)->download('Member-' . date('d-m-Y') . '.xlsx');
+    }
+
+    /**
+     * Save members data as pdf file.
+     *
+     * @param  \App\Models\Outlet  $outlet
+     * @return \Barryvdh\DomPDF\Facade\Pdf
+     */
+    public function exportPDF(Outlet $outlet)
+    {
+        $members = Member::where('outlet_id', $outlet->id)->with('outlet')->get();
+
+        $pdf = Pdf::loadView('members.pdf', ['members' => $members, 'outlet' => $outlet]);
+        return $pdf->stream('Layanan-' . date('dmY') . '.pdf');
+    }
+
+    /**
+     * Import members data from xlsx file.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Outlet  $outlet
+     * @return \Illuminate\Http\RedirectResponse;
+     */
+    public function importExcel(Request $request, Outlet $outlet)
+    {
+        $request->validate([
+            'file_import' => 'required|file|mimes:xlsx'
+        ]);
+
+        Excel::import(new MembersImport, $request->file('file_import'));
+
+        return response()->json([
+            'message' => 'Import data berhasil'
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * Download excel template.
+     *
+     * @return \Illuminate\Support\Facades\Storage
+     */
+    public function downloadTemplate()
+    {
+        return Storage::download('templates/Import_member_cleandry.xlsx');
     }
 }

@@ -16,7 +16,7 @@ class ServicesImport implements WithValidation, ToModel,  WithHeadingRow
 
     public function __construct()
     {
-        $this->outletId = Auth::user()->is_super ? session()->get('outlet')->id : Auth::user()->outlet_id;
+        $this->outletId = Auth::user()->role === 'admin' ? session()->get('outlet')->id : Auth::user()->outlet_id;
     }
 
     /**

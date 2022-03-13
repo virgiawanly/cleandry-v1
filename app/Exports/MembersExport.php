@@ -2,7 +2,8 @@
 
 namespace App\Exports;
 
-use App\Models\Service;
+use App\Models\Member;
+use App\Models\Outlet;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -10,38 +11,42 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Events\AfterSheet;
 
-class ServicesExport implements FromQuery, WithMapping, WithHeadings, WithEvents
+class MembersExport implements FromQuery, WithMapping, WithHeadings, WithEvents
 {
     use Exportable;
 
     private $rowNumber = 0;
+    private $outletId;
+    private $outle;
 
     public function whereOutlet(int $outletId)
     {
         $this->outletId = $outletId;
+        $this->outlet = Outlet::where('id', $outletId)->first();
         return $this;
     }
 
     public function query()
     {
-        return Service::query()->with(['outlet', 'type'])->where('outlet_id', $this->outletId);
+        return Member::query()->where('outlet_id', $this->outletId);
     }
 
     public function headings(): array
     {
-        return ["No", "Outlet", "Nama Layanan", "Jenis", "Satuan", "Harga", "Tgl Ditambahkan"];
+        return ["No", "Nama Member", "Nomor Telepon", "Email",  "Jenis Kelamin", "Alamat", "Ditambahkan pada"];
     }
 
-    public function map($service): array
+    public function map($member): array
     {
+        $gender = $member->gender === 'M' ? 'Laki-laki' : 'Perempuan';
         return [
             ++$this->rowNumber,
-            $service->outlet->name,
-            $service->name,
-            $service->type->name,
-            $service->unit,
-            $service->price,
-            $service->created_at,
+            $member->name,
+            $member->phone,
+            $member->email,
+            $gender,
+            $member->address,
+            $member->created_at,
         ];
     }
 
@@ -63,8 +68,10 @@ class ServicesExport implements FromQuery, WithMapping, WithHeadings, WithEvents
                 $event->sheet->insertNewRowBefore(1, 2);
                 $event->sheet->mergeCells('A1:G1');
                 $event->sheet->mergeCells('A2:B2');
-                $event->sheet->setCellValue('A1', 'Data Layanan Laundry');
-                $event->sheet->setCellValue('A2', 'Tgl : ' . date('d/m/Y'));
+                $event->sheet->mergeCells('C2:D2');
+                $event->sheet->setCellValue('A1', 'Data Member Laundry');
+                $event->sheet->setCellValue('A2', 'Outlet : ' . $this->outlet->name);
+                $event->sheet->setCellValue('C2', 'Tgl : ' . date('d/m/Y'));
                 $event->sheet->getStyle('A1')->getFont()->setBold(true);
                 $event->sheet->getStyle('A3:G3')->getFont()->setBold(true);
                 $event->sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);

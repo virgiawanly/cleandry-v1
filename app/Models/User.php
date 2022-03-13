@@ -54,15 +54,4 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Outlet::class, 'outlet_id');
     }
-
-    /**
-     * Scope a query to exclude super admin users.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return void
-     */
-    public function scopeRegular($query)
-    {
-        $query->where('is_super', 0);
-    }
 }
