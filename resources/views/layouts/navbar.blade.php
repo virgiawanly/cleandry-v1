@@ -13,7 +13,7 @@
             <a class="nav-link" data-toggle="dropdown" href="#">
                 @auth
                     <div>
-                        <img src="https://picsum.photos/200/200" class="img-circle" alt="User Image"
+                        <img src="{{ asset('img/profile_pict.svg') }}" class="img-circle" alt="User Image"
                             style="width: 30px">
                         <span class="ml-1"> {{ Auth::user()->name }}</span>
                     </div>

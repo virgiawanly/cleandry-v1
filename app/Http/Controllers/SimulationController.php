@@ -23,6 +23,23 @@ class SimulationController extends Controller
         ]);
     }
 
+    public function fee()
+    {
+        return view('simulation.fee', [
+            'title' => 'Simulasi Gaji Karyawan',
+            'breadcrumbs' => [
+                [
+                    'href' => '/simluation/employee',
+                    'label' => 'Simulasi'
+                ],
+                [
+                    'href' => '/simluation/employee',
+                    'label' => 'Karyawan'
+                ],
+            ],
+        ]);
+    }
+
     public function books()
     {
         return view('simulation.books', [

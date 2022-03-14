@@ -29,7 +29,7 @@ class TransactionController extends Controller
             'breadcrumbs' => [
                 [
                     'href' => '/o/' . $outlet->id . '/transactions',
-                    'label' => 'Member'
+                    'label' => 'Transactions'
                 ]
             ],
             'outlet' => $outlet,
@@ -359,5 +359,69 @@ class TransactionController extends Controller
         $redirectTo = 'https://wa.me/' . $transaction->member->phone;
         // dd($redirectTo);
         return redirect()->to($redirectTo)->with('text', $text);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \App\Models\Outlet  $outlet
+     * @return \Illuminate\Http\Response
+     */
+    public function report(Outlet $outlet)
+    {
+        return view('transactions.report', [
+            'title' => 'Kelola Transaksi',
+            'breadcrumbs' => [
+                [
+                    'href' => '/o/' . $outlet->id . '/transactions',
+                    'label' => 'Transactions'
+                ],
+                [
+                    'href' => '/o/' . $outlet->id . '/transactions',
+                    'label' => 'Report'
+                ],
+            ],
+            'outlet' => $outlet,
+        ]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \App\Models\Outlet  $outlet
+     * @return \Illuminate\Http\Response
+     */
+    public function getReport(Request $request, Outlet $outlet)
+    {
+        $dateStart = ($request->has('date_start') && $request->date_start != "") ? $request->date_start : date('Y-m-d', mktime(0, 0, 0, date('m'), 1, date('Y')));
+        $dateEnd = ($request->has('date_end') && $request->date_end != "") ? $request->date_end : date('Y-m-d');
+
+        $transactions = Transaction::whereBetween('date', [$dateStart, $dateEnd])->get();
+
+        return DataTables::of($transactions)
+        ->addIndexColumn()
+        ->editColumn('date', function ($transaction) {
+            return date('d/m/Y', strtotime($transaction->date));
+        })
+        ->editColumn('deadline', function ($transaction) {
+            return date('d/m/Y', strtotime($transaction->deadline));
+        })
+        ->addColumn('total_payment', function ($transaction) {
+            return $transaction->getTotalPayment();
+        })
+        ->addColumn('total_item', function ($transaction) {
+            return $transaction->details()->count();
+        })
+        ->addColumn('actions', function ($transaction) use ($outlet) {
+            $buttons = '';
+            if ($transaction->payment_status === 'unpaid') {
+                $buttons .= '<button class="btn btn-success btn-sm m-1 update-payment-button" data-detail-url="' . route('transactions.show', [$outlet->id, $transaction->id]) . '" data-update-payment-url="' . route('transactions.updatePayment', [$outlet->id, $transaction->id]) . '"><i class="fas fa-cash-register mr-1"></i><span>Bayar</span></button>';
+            }
+            if ($transaction->status !== 'taken') {
+                $buttons .= '<button class="btn btn-primary btn-sm m-1 update-status-button" data-update-url="' . route('transactions.updateStatus', [$outlet->id, $transaction->id]) . '" data-status="' . $transaction->status . '"><i class="fas fa-arrow-circle-right mr-1"></i><span>Proses</span></button>';
+            }
+            $buttons .= '<button class="btn btn-info btn-sm m-1 detail-button" data-detail-url="' . route('transactions.show', [$outlet->id, $transaction->id]) . '"><i class="fas fa-eye mr-1"></i><span>Detail</span></button>';
+            return $buttons;
+        })->rawColumns(['actions'])->make(true);
     }
 }

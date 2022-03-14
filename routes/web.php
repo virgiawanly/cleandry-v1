@@ -91,6 +91,10 @@ Route::middleware('auth', 'role:admin,cashier', 'outlet')->prefix('/o/{outlet}')
     Route::get('/transactions/new-transaction/get-services', [ServiceController::class, 'datatable'])->name('newTransaction.services');
     Route::get('/transactions/new-transaction/get-members', [MemberController::class, 'datatable'])->name('newTransaction.members');
 
+    // Transaction report
+    Route::get('/transactions/report', [TransactionController::class, 'report'])->name('transactions.report');
+    Route::get('/transactions/report/get-report', [TransactionController::class, 'getReport'])->name('transactions.getReport');
+
     // Transaction histories page
     Route::get('/transactions/datatable', [TransactionController::class, 'datatable'])->name('transactions.datatable');
     Route::put('/transactions/{transaction}/status', [TransactionController::class, 'updateStatus'])->name('transactions.updateStatus');
@@ -106,5 +110,6 @@ Route::middleware('auth', 'role:admin,cashier', 'outlet')->prefix('/o/{outlet}')
 Route::middleware('auth', 'role:admin')->group(function () {
     // Algorithm
     Route::get('/simulation/employee', [SimulationController::class, 'employee']);
+    Route::get('/simulation/fee', [SimulationController::class, 'fee']);
     Route::get('/simulation/books', [SimulationController::class, 'books']);
 });

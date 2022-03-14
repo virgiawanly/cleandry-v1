@@ -16,7 +16,7 @@
        with font-awesome or any other icon font library -->
                 <li class="nav-item">
                     <a href="/" class="nav-link active">
-                        <ion-icon class="nav-icon" name="desktop-outline"></ion-icon>
+                        <i class="nav-icon fas fa-tv"></i>
                         <p>
                             Dashboard
                         </p>
@@ -25,7 +25,7 @@
                 <li class="nav-header mt-2">ADMINISTRATOR</li>
                 <li class="nav-item">
                     <a href="/outlets" class="nav-link">
-                        <ion-icon class="nav-icon" name="storefront-outline"></ion-icon>
+                        <i class="nav-icon fas fa-store-alt"></i>
                         <p>
                             Kelola Outlet
                         </p>
@@ -33,7 +33,7 @@
                 </li>
                 <li class="nav-item">
                     <a href="/users" class="nav-link">
-                        <ion-icon class="nav-icon" name="people-outline"></ion-icon>
+                        <i class="nav-icon fas fa-users"></i>
                         <p>
                             Kelola Users
                         </p>
@@ -41,7 +41,7 @@
                 </li>
                 <li class="nav-item">
                     <a href="/inventories" class="nav-link">
-                        <ion-icon class="nav-icon" name="cube-outline"></ion-icon>
+                        <i class="nav-icon fas fa-box-open"></i>
                         <p>
                             Kelola Inventaris
                         </p>
@@ -52,7 +52,7 @@
     request()->session()->has('outlet'))
                     <li class="nav-item">
                         <a href="/select-outlet" class="nav-link">
-                            <ion-icon class="nav-icon" name="storefront-outline"></ion-icon>
+                            <i class="nav-icon fas fa-store-alt"></i>
                             <p>
                                 Pilih Outlet
                             </p>
@@ -64,14 +64,14 @@
                         @if (request()->session()->has('outlet'))
                             <a href="/o/{{ request()->session()->get('outlet')->id }}/services"
                                 class="nav-link">
-                                <ion-icon class="nav-icon" name="shirt-outline"></ion-icon>
+                                <i class="nav-icon fas fa-tshirt"></i>
                                 <p>
                                     Layanan
                                 </p>
                             </a>
                         @else
                             <a href="/select-outlet" class="nav-link">
-                                <ion-icon class="nav-icon" name="shirt-outline"></ion-icon>
+                                <i class="nav-icon fas fa-tshirt"></i>
                                 <p>
                                     Layanan
                                 </p>
@@ -79,7 +79,7 @@
                         @endif
                     @elseif(Auth::user()->outlet_id)
                         <a href="/o/{{ Auth::user()->outlet_id }}/services" class="nav-link">
-                            <ion-icon class="nav-icon" name="shirt-outline"></ion-icon>
+                            <i class="nav-icon fas fa-tshirt"></i>
                             <p>
                                 Layanan
                             </p>
@@ -90,14 +90,14 @@
                     @if (Auth::user()->role === 'admin')
                         @if (request()->session()->has('outlet'))
                             <a href="/o/{{ request()->session()->get('outlet')->id }}/members" class="nav-link">
-                                <ion-icon class="nav-icon" name="people-circle-outline"></ion-icon>
+                                <i class="nav-icon fas fa-address-book"></i>
                                 <p>
                                     Member
                                 </p>
                             </a>
                         @else
                             <a href="/select-outlet" class="nav-link">
-                                <ion-icon class="nav-icon" name="people-circle-outline"></ion-icon>
+                                <i class="nav-icon fas fa-address-book"></i>
                                 <p>
                                     Member
                                 </p>
@@ -105,7 +105,7 @@
                         @endif
                     @elseif(Auth::user()->outlet_id)
                         <a href="/o/{{ Auth::user()->outlet_id }}/members" class="nav-link">
-                            <ion-icon class="nav-icon" name="people-circle-outline"></ion-icon>
+                            <i class="nav-icon fas fa-address-book"></i>
                             <p>
                                 Member
                             </p>
@@ -118,14 +118,14 @@
                         @if (request()->session()->has('outlet'))
                             <a href="/o/{{ request()->session()->get('outlet')->id }}/transactions"
                                 class="nav-link">
-                                <ion-icon class="nav-icon" name="document-text-outline"></ion-icon>
+                                <i class="nav-icon fas fa-archive"></i>
                                 <p>
                                     Data Pesanan
                                 </p>
                             </a>
                         @else
                             <a href="/select-outlet" class="nav-link">
-                                <ion-icon class="nav-icon" name="document-text-outline"></ion-icon>
+                                <i class="nav-icon fas fa-archive"></i>
                                 <p>
                                     Data Pesanan
                                 </p>
@@ -133,7 +133,7 @@
                         @endif
                     @elseif(Auth::user()->outlet_id)
                         <a href="/o/{{ Auth::user()->outlet_id }}/transactions" class="nav-link">
-                            <ion-icon class="nav-icon" name="document-text-outline"></ion-icon>
+                            <i class="nav-icon fas fa-archive"></i>
                             <p>
                                 Data Pesanan
                             </p>
@@ -145,14 +145,14 @@
                         @if (request()->session()->has('outlet'))
                             <a href="/o/{{ request()->session()->get('outlet')->id }}/transactions/new-transaction"
                                 class="nav-link">
-                                <ion-icon class="nav-icon" name="cart-outline"></ion-icon>
+                                <i class="nav-icon fas fa-cash-register"></i>
                                 <p>
                                     Transaksi Baru
                                 </p>
                             </a>
                         @else
                             <a href="/select-outlet" class="nav-link">
-                                <ion-icon class="nav-icon" name="cart-outline"></ion-icon>
+                                <i class="nav-icon fas fa-cash-register"></i>
                                 <p>
                                     Transaksi Baru
                                 </p>
@@ -161,7 +161,7 @@
                     @elseif(Auth::user()->outlet_id)
                         <a href="/o/{{ Auth::user()->outlet_id }}/transactions/new-transaction"
                             class="nav-link">
-                            <ion-icon class="nav-icon" name="cart-outline"></ion-icon>
+                            <i class="nav-icon fas fa-cash-register"></i>
                             <p>
                                 Transaksi Baru
                             </p>
@@ -169,17 +169,37 @@
                     @endif
                 </li>
                 <li class="nav-item">
-                    <a href="/transactions/report" class="nav-link">
-                        <ion-icon class="nav-icon" name="bar-chart-outline"></ion-icon>
-                        <p>
-                            Laporan
-                        </p>
-                    </a>
+                    @if (Auth::user()->role === 'admin')
+                        @if (request()->session()->has('outlet'))
+                            <a href="/o/{{ request()->session()->get('outlet')->id }}/transactions/report"
+                                class="nav-link">
+                                 <i class="nav-icon fas fa-file-alt"></i>
+                                <p>
+                                    Laporan
+                                </p>
+                            </a>
+                        @else
+                            <a href="/select-outlet" class="nav-link">
+                                 <i class="nav-icon fas fa-file-alt"></i>
+                                <p>
+                                    Laporan
+                                </p>
+                            </a>
+                        @endif
+                    @elseif(Auth::user()->outlet_id)
+                        <a href="/o/{{ Auth::user()->outlet_id }}/transactions/report"
+                            class="nav-link">
+                             <i class="nav-icon fas fa-file-alt"></i>
+                            <p>
+                                Laporan
+                            </p>
+                        </a>
+                    @endif
                 </li>
                 <li class="nav-header">SETTINGS</li>
                 <li class="nav-item">
                     <a href="/profile/edit" class="nav-link">
-                        <ion-icon class="nav-icon" name="bar-chart-outline"></ion-icon>
+                        <i class="nav-icon fas fa-file-alt"></i>
                         <p>
                             Edit Profile
                         </p>
@@ -188,7 +208,7 @@
                 <li class="nav-header">SIMULASI</li>
                 <li class="nav-item">
                     <a href="/simulation/employee" class="nav-link">
-                        <ion-icon class="nav-icon" name="people-circle-outline"></ion-icon>
+                        <i class="nav-icon fas fa-address-book"></i>
                         <p>
                             Simulasi Karyawan
                         </p>
@@ -196,9 +216,17 @@
                 </li>
                 <li class="nav-item">
                     <a href="/simulation/books" class="nav-link">
-                        <ion-icon class="nav-icon" name="file-tray-stacked-outline"></ion-icon>
+                        <i class="nav-icon fas fa-book"></i>
                         <p>
                             Simulasi Data Buku
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/simulation/fee" class="nav-link">
+                        <i class="nav-icon fas fa-book"></i>
+                        <p>
+                            Simulasi Gaji Karyawan
                         </p>
                     </a>
                 </li>
