@@ -112,6 +112,25 @@
                         </a>
                     @endif
                 </li>
+                <li class="nav-item">
+                    @if (Auth::user()->role === 'admin')
+                        @if (request()->session()->has('outlet'))
+                            <a href="/o/{{ request()->session()->get('outlet')->id }}/pickups" class="nav-link">
+                                <i class="nav-icon fas fa-truck"></i>
+                                <p>
+                                    Penjemputan
+                                </p>
+                            </a>
+                        @else
+                            <a href="/select-outlet" class="nav-link">
+                                <i class="nav-icon fas fa-truck"></i>
+                                <p>
+                                    Penjemputan
+                                </p>
+                            </a>
+                        @endif
+                    @endif
+                </li>
                 <li class="nav-header">TRANSAKSI</li>
                 <li class="nav-item">
                     @if (Auth::user()->role === 'admin')
@@ -173,23 +192,22 @@
                         @if (request()->session()->has('outlet'))
                             <a href="/o/{{ request()->session()->get('outlet')->id }}/transactions/report"
                                 class="nav-link">
-                                 <i class="nav-icon fas fa-file-alt"></i>
+                                <i class="nav-icon fas fa-file-alt"></i>
                                 <p>
                                     Laporan
                                 </p>
                             </a>
                         @else
                             <a href="/select-outlet" class="nav-link">
-                                 <i class="nav-icon fas fa-file-alt"></i>
+                                <i class="nav-icon fas fa-file-alt"></i>
                                 <p>
                                     Laporan
                                 </p>
                             </a>
                         @endif
                     @elseif(Auth::user()->outlet_id)
-                        <a href="/o/{{ Auth::user()->outlet_id }}/transactions/report"
-                            class="nav-link">
-                             <i class="nav-icon fas fa-file-alt"></i>
+                        <a href="/o/{{ Auth::user()->outlet_id }}/transactions/report" class="nav-link">
+                            <i class="nav-icon fas fa-file-alt"></i>
                             <p>
                                 Laporan
                             </p>

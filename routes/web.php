@@ -5,6 +5,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PickupController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SimulationController;
 use App\Http\Controllers\TransactionController;
@@ -36,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/download/template/services', [ServiceController::class, 'downloadTemplate'])->name('services.template.download');
     Route::get('/download/template/inventories', [InventoryController::class, 'downloadTemplate'])->name('inventories.template.download');
     Route::get('/download/template/members', [MemberController::class, 'downloadTemplate'])->name('members.template.download');
+    Route::get('/download/template/pickups', [PickupController::class, 'downloadTemplate'])->name('pickups.template.download');
 
     // Logout
     Route::middleware('auth')->post('/logout', [AuthController::class, 'logout']);
@@ -76,6 +78,12 @@ Route::middleware('auth', 'role:admin', 'outlet')->prefix('/o/{outlet}')->group(
     Route::get('/services/export/excel', [ServiceController::class, 'exportExcel'])->name('services.export.excel');
     Route::get('/services/export/pdf', [ServiceController::class, 'exportPDF'])->name('services.export.pdf');
     Route::apiResource('/services', ServiceController::class);
+
+    Route::get('/pickups/datatable', [PickupController::class, 'datatable'])->name('pickups.datatable');
+    Route::post('/pickups/import/excel', [PickupController::class, 'importExcel'])->name('pickups.import.excel');
+    Route::get('/pickups/export/excel', [PickupController::class, 'exportExcel'])->name('pickups.export.excel');
+    Route::put('/pickups/{pickup}/status', [PickupController::class, 'updateStatus'])->name('pickups.updateStatus');
+    Route::apiResource('/pickups', PickupController::class);
 });
 
 Route::middleware('auth', 'role:admin,cashier', 'outlet')->prefix('/o/{outlet}')->group(function () {
