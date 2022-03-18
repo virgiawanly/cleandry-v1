@@ -101,7 +101,9 @@ Route::middleware('auth', 'role:admin,cashier', 'outlet')->prefix('/o/{outlet}')
 
     // Transaction report
     Route::get('/transactions/report', [TransactionController::class, 'report'])->name('transactions.report');
-    Route::get('/transactions/report/get-report', [TransactionController::class, 'getReport'])->name('transactions.getReport');
+    Route::get('/transactions/report/export/excel', [TransactionController::class, 'exportExcel'])->name('transactions.export.excel');
+    Route::get('/transactions/report/export/pdf', [TransactionController::class, 'exportPDF'])->name('transactions.export.pdf');
+    Route::get('/transactions/report/datatable', [TransactionController::class, 'reportDatatable'])->name('transactions.reportDatatable');
 
     // Transaction histories page
     Route::get('/transactions/datatable', [TransactionController::class, 'datatable'])->name('transactions.datatable');

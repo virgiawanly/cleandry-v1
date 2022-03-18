@@ -130,11 +130,11 @@ $(function () {
                 .find(".td-transaction-invoice")
                 .text(transaction.invoice);
 
-            $("#transaction-info-table").find(
-                ".td-transaction-member-name"
-            ).html(`<label for="modal-tab-member" class="mb-0 text-primary">
-                                ${transaction.member.name}
-                            <i class="fas fa-external-link-alt ml-1"></i></label>`);
+            $("#transaction-info-table")
+                .find(".td-transaction-member-name")
+                .html(
+                    `<label for="modal-tab-member" class="mb-0 text-primary">${transaction.member.name}</label>`
+                );
 
             $("#transaction-info-table")
                 .find(".td-transaction-date")

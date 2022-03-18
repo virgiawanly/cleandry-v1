@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\TransactionsExport;
 use App\Http\Resources\TransactionCollection;
 use App\Models\Member;
 use App\Models\Outlet;
@@ -39,6 +40,7 @@ class TransactionController extends Controller
     /**
      * Return data for DataTables.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
      */
@@ -95,6 +97,7 @@ class TransactionController extends Controller
     /**
      * Show new transaction form.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
      */
@@ -223,6 +226,7 @@ class TransactionController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Transaction  $transaction
      * @return \Illuminate\Http\Response
@@ -260,6 +264,7 @@ class TransactionController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Transaction  $transaction
      * @return \Illuminate\Http\Response
      */
@@ -305,6 +310,9 @@ class TransactionController extends Controller
     /**
      * Update transaction payment status.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Outlet  $outlet
+     * @param  \App\Models\Transaction  $transaction
      * @return \Illuminate\Http\Response
      */
     public function updatePayment(Request $request, Outlet $outlet, Transaction $transaction)
@@ -331,6 +339,14 @@ class TransactionController extends Controller
         ], Response::HTTP_OK);
     }
 
+
+    /**
+     * Send transaction invoice via whatsapp.
+     *
+     * @param  \App\Models\Outlet  $outlet
+     * @param  \App\Models\Transaction  $transaction
+     * @return \Illuminate\Http\Response
+     */
     public function sendWhatsapp(Outlet $outlet, Transaction $transaction)
     {
         $transaction->load('details', 'details.service');
@@ -370,7 +386,7 @@ class TransactionController extends Controller
     public function report(Outlet $outlet)
     {
         return view('transactions.report', [
-            'title' => 'Kelola Transaksi',
+            'title' => 'Laporan Transaksi',
             'breadcrumbs' => [
                 [
                     'href' => '/o/' . $outlet->id . '/transactions',
@@ -388,10 +404,11 @@ class TransactionController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
      */
-    public function getReport(Request $request, Outlet $outlet)
+    public function reportDatatable(Request $request, Outlet $outlet)
     {
         $dateStart = ($request->has('date_start') && $request->date_start != "") ? $request->date_start : date('Y-m-d', mktime(0, 0, 0, date('m'), 1, date('Y')));
         $dateEnd = ($request->has('date_end') && $request->date_end != "") ? $request->date_end : date('Y-m-d');
@@ -399,29 +416,51 @@ class TransactionController extends Controller
         $transactions = Transaction::whereBetween('date', [$dateStart, $dateEnd])->get();
 
         return DataTables::of($transactions)
-        ->addIndexColumn()
-        ->editColumn('date', function ($transaction) {
-            return date('d/m/Y', strtotime($transaction->date));
-        })
-        ->editColumn('deadline', function ($transaction) {
-            return date('d/m/Y', strtotime($transaction->deadline));
-        })
-        ->addColumn('total_payment', function ($transaction) {
-            return $transaction->getTotalPayment();
-        })
-        ->addColumn('total_item', function ($transaction) {
-            return $transaction->details()->count();
-        })
-        ->addColumn('actions', function ($transaction) use ($outlet) {
-            $buttons = '';
-            if ($transaction->payment_status === 'unpaid') {
-                $buttons .= '<button class="btn btn-success btn-sm m-1 update-payment-button" data-detail-url="' . route('transactions.show', [$outlet->id, $transaction->id]) . '" data-update-payment-url="' . route('transactions.updatePayment', [$outlet->id, $transaction->id]) . '"><i class="fas fa-cash-register mr-1"></i><span>Bayar</span></button>';
-            }
-            if ($transaction->status !== 'taken') {
-                $buttons .= '<button class="btn btn-primary btn-sm m-1 update-status-button" data-update-url="' . route('transactions.updateStatus', [$outlet->id, $transaction->id]) . '" data-status="' . $transaction->status . '"><i class="fas fa-arrow-circle-right mr-1"></i><span>Proses</span></button>';
-            }
-            $buttons .= '<button class="btn btn-info btn-sm m-1 detail-button" data-detail-url="' . route('transactions.show', [$outlet->id, $transaction->id]) . '"><i class="fas fa-eye mr-1"></i><span>Detail</span></button>';
-            return $buttons;
-        })->rawColumns(['actions'])->make(true);
+            ->addIndexColumn()
+            ->editColumn('date', function ($transaction) {
+                return date('d/m/Y', strtotime($transaction->date));
+            })
+            ->editColumn('deadline', function ($transaction) {
+                return date('d/m/Y', strtotime($transaction->deadline));
+            })
+            ->addColumn('total_payment', function ($transaction) {
+                return $transaction->getTotalPayment();
+            })
+            ->addColumn('total_item', function ($transaction) {
+                return $transaction->details()->count();
+            })->rawColumns(['actions'])->make(true);
+    }
+
+    /**
+     * Save transactions data as excel file.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Outlet  $outlet
+     * @return \App\Exports\MembersExport
+     */
+    public function exportExcel(Request $request, Outlet $outlet)
+    {
+        $dateStart = ($request->has('date_start') && $request->date_start != "") ? $request->date_start : date('Y-m-d', mktime(0, 0, 0, date('m'), 1, date('Y')));
+        $dateEnd = ($request->has('date_end') && $request->date_end != "") ? $request->date_end : date('Y-m-d');
+
+        return (new TransactionsExport)->whereOutlet($outlet->id)->setDateStart($dateStart)->setDateEnd($dateEnd)->download('Transaksi-' . $dateStart . '-' . $dateEnd . '.xlsx');
+    }
+
+    /**
+     * Save transactions data as pdf file.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Outlet  $outlet
+     * @return \Barryvdh\DomPDF\Facade\Pdf
+     */
+    public function exportPDF(Request $request, Outlet $outlet)
+    {
+        $dateStart = ($request->has('date_start') && $request->date_start != "") ? $request->date_start : date('Y-m-d', mktime(0, 0, 0, date('m'), 1, date('Y')));
+        $dateEnd = ($request->has('date_end') && $request->date_end != "") ? $request->date_end : date('Y-m-d');
+
+        $transactions = Transaction::where('outlet_id', $outlet->id)->whereBetween('date', [$dateStart, $dateEnd])->with('details')->get();
+
+        $pdf = Pdf::loadView('transactions.pdf', ['transactions' => $transactions, 'outlet' => $outlet, 'dateStart' => $dateStart, 'dateEnd' => $dateEnd]);
+        return $pdf->stream('Transaksi-' . $dateStart . '-' . $dateEnd . '.pdf');
     }
 }
