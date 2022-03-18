@@ -150,7 +150,7 @@ $(function () {
             },
             {
                 data: "type",
-                render: (type) => type.name,
+                render: (type) => type ? type.name : '-',
             },
             {
                 data: "unit",

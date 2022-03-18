@@ -55,7 +55,7 @@
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ $service->outlet->name }}</td>
                     <td>{{ $service->name }}</td>
-                    <td>{{ $service->type->name }}</td>
+                    <td>{{ $service->type ? $service->type->name : '-' }}</td>
                     <td>{{ $service->unit }}</td>
                     <td>{{ $service->price }}</td>
                     <td>{{ date('d/m/Y', strtotime($service->created_at)) }}</td>

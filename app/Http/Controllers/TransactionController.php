@@ -389,11 +389,7 @@ class TransactionController extends Controller
             'title' => 'Laporan Transaksi',
             'breadcrumbs' => [
                 [
-                    'href' => '/o/' . $outlet->id . '/transactions',
-                    'label' => 'Transactions'
-                ],
-                [
-                    'href' => '/o/' . $outlet->id . '/transactions',
+                    'href' => '/o/' . $outlet->id . '/report',
                     'label' => 'Report'
                 ],
             ],

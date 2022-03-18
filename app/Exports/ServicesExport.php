@@ -38,7 +38,7 @@ class ServicesExport implements FromQuery, WithMapping, WithHeadings, WithEvents
             ++$this->rowNumber,
             $service->outlet->name,
             $service->name,
-            $service->type->name,
+            $service->type ? $service->type->name : '-',
             $service->unit,
             $service->price,
             $service->created_at,

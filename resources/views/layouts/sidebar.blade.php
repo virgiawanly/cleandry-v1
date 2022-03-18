@@ -22,32 +22,44 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-header mt-2">ADMINISTRATOR</li>
-                <li class="nav-item">
-                    <a href="/outlets" class="nav-link">
-                        <i class="nav-icon fas fa-store-alt"></i>
-                        <p>
-                            Kelola Outlet
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/users" class="nav-link">
-                        <i class="nav-icon fas fa-users"></i>
-                        <p>
-                            Kelola Users
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/inventories" class="nav-link">
-                        <i class="nav-icon fas fa-box-open"></i>
-                        <p>
-                            Kelola Inventaris
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-header">OUTLET</li>
+                @if (Auth::user()->role === 'admin')
+                    <li class="nav-header mt-2">ADMINISTRATOR</li>
+                    <li class="nav-item">
+                        <a href="/outlets" class="nav-link">
+                            <i class="nav-icon fas fa-store-alt"></i>
+                            <p>
+                                Kelola Outlet
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/users" class="nav-link">
+                            <i class="nav-icon fas fa-users"></i>
+                            <p>
+                                Kelola Users
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/service-types" class="nav-link">
+                            <i class="nav-icon fas fa-tshirt"></i>
+                            <p>
+                                Kelola Jenis Cucian
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/inventories" class="nav-link">
+                            <i class="nav-icon fas fa-box-open"></i>
+                            <p>
+                                Kelola Inventaris
+                            </p>
+                        </a>
+                    </li>
+                @endif
+                @if (Auth::user()->role === 'admin' || Auth::user()->role === 'cashier')
+                    <li class="nav-header">OUTLET</li>
+                @endif
                 @if (Auth::user()->role === 'admin' &&
     request()->session()->has('outlet'))
                     <li class="nav-item">
@@ -64,7 +76,7 @@
                         @if (request()->session()->has('outlet'))
                             <a href="/o/{{ request()->session()->get('outlet')->id }}/services"
                                 class="nav-link">
-                                <i class="nav-icon fas fa-tshirt"></i>
+                                <i class="nav-icon fas fa-shopping-basket"></i>
                                 <p>
                                     Layanan
                                 </p>
@@ -77,13 +89,6 @@
                                 </p>
                             </a>
                         @endif
-                    @elseif(Auth::user()->outlet_id)
-                        <a href="/o/{{ Auth::user()->outlet_id }}/services" class="nav-link">
-                            <i class="nav-icon fas fa-tshirt"></i>
-                            <p>
-                                Layanan
-                            </p>
-                        </a>
                     @endif
                 </li>
                 <li class="nav-item">
@@ -103,7 +108,7 @@
                                 </p>
                             </a>
                         @endif
-                    @elseif(Auth::user()->outlet_id)
+                    @elseif(Auth::user()->role === 'cashier' && Auth::user()->outlet_id)
                         <a href="/o/{{ Auth::user()->outlet_id }}/members" class="nav-link">
                             <i class="nav-icon fas fa-address-book"></i>
                             <p>
@@ -129,6 +134,13 @@
                                 </p>
                             </a>
                         @endif
+                    @elseif(Auth::user()->role === 'cashier' && Auth::user()->outlet_id)
+                        <a href="/o/{{ Auth::user()->outlet_id }}/pickups" class="nav-link">
+                            <i class="nav-icon fas fa-truck"></i>
+                            <p>
+                                Penjemputan
+                            </p>
+                        </a>
                     @endif
                 </li>
                 <li class="nav-header">TRANSAKSI</li>
@@ -150,7 +162,7 @@
                                 </p>
                             </a>
                         @endif
-                    @elseif(Auth::user()->outlet_id)
+                    @elseif(Auth::user()->role === 'cashier' && Auth::user()->outlet_id)
                         <a href="/o/{{ Auth::user()->outlet_id }}/transactions" class="nav-link">
                             <i class="nav-icon fas fa-archive"></i>
                             <p>
@@ -177,7 +189,7 @@
                                 </p>
                             </a>
                         @endif
-                    @elseif(Auth::user()->outlet_id)
+                    @elseif(Auth::user()->role === 'cashier' && Auth::user()->outlet_id)
                         <a href="/o/{{ Auth::user()->outlet_id }}/transactions/new-transaction"
                             class="nav-link">
                             <i class="nav-icon fas fa-cash-register"></i>
@@ -190,8 +202,7 @@
                 <li class="nav-item">
                     @if (Auth::user()->role === 'admin')
                         @if (request()->session()->has('outlet'))
-                            <a href="/o/{{ request()->session()->get('outlet')->id }}/transactions/report"
-                                class="nav-link">
+                            <a href="/o/{{ request()->session()->get('outlet')->id }}/report" class="nav-link">
                                 <i class="nav-icon fas fa-file-alt"></i>
                                 <p>
                                     Laporan
@@ -206,7 +217,7 @@
                             </a>
                         @endif
                     @elseif(Auth::user()->outlet_id)
-                        <a href="/o/{{ Auth::user()->outlet_id }}/transactions/report" class="nav-link">
+                        <a href="/o/{{ Auth::user()->outlet_id }}/report" class="nav-link">
                             <i class="nav-icon fas fa-file-alt"></i>
                             <p>
                                 Laporan
@@ -223,31 +234,33 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-header">SIMULASI</li>
-                <li class="nav-item">
-                    <a href="/simulation/employee" class="nav-link">
-                        <i class="nav-icon fas fa-address-book"></i>
-                        <p>
-                            Simulasi Karyawan
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/simulation/books" class="nav-link">
-                        <i class="nav-icon fas fa-book"></i>
-                        <p>
-                            Simulasi Data Buku
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/simulation/fee" class="nav-link">
-                        <i class="nav-icon fas fa-book"></i>
-                        <p>
-                            Simulasi Gaji Karyawan
-                        </p>
-                    </a>
-                </li>
+                @if (Auth::user()->role === 'admin')
+                    <li class="nav-header">SIMULASI</li>
+                    <li class="nav-item">
+                        <a href="/simulation/employee" class="nav-link">
+                            <i class="nav-icon fas fa-address-book"></i>
+                            <p>
+                                Simulasi Karyawan
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/simulation/books" class="nav-link">
+                            <i class="nav-icon fas fa-book"></i>
+                            <p>
+                                Simulasi Data Buku
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/simulation/fee" class="nav-link">
+                            <i class="nav-icon fas fa-book"></i>
+                            <p>
+                                Simulasi Gaji Karyawan
+                            </p>
+                        </a>
+                    </li>
+                @endif
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

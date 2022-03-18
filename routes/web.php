@@ -7,6 +7,7 @@ use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PickupController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\ServiceTypeController;
 use App\Http\Controllers\SimulationController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
@@ -41,6 +42,10 @@ Route::middleware('auth')->group(function () {
 
     // Logout
     Route::middleware('auth')->post('/logout', [AuthController::class, 'logout']);
+
+    // Edit profile
+    Route::get('/edit-profile', [UserController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/edit-profile', [UserController::class, 'updateProfile']);
 });
 
 // Admin only
@@ -54,6 +59,10 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::get('/users/data', [UserController::class, 'data'])->name('users.data');
     Route::get('/users/datatable', [UserController::class, 'datatable'])->name('users.datatable');
     Route::apiResource('/users', UserController::class);
+
+    // Service types management
+    Route::get('/service-types/datatable', [ServiceTypeController::class, 'datatable'])->name('service-types.datatable');
+    Route::apiResource('/service-types', ServiceTypeController::class);
 
     // Select outlet for admin
     Route::get('/select-outlet', [OutletController::class, 'selectOutlet'])->name('outlets.select');
@@ -78,12 +87,14 @@ Route::middleware('auth', 'role:admin', 'outlet')->prefix('/o/{outlet}')->group(
     Route::get('/services/export/excel', [ServiceController::class, 'exportExcel'])->name('services.export.excel');
     Route::get('/services/export/pdf', [ServiceController::class, 'exportPDF'])->name('services.export.pdf');
     Route::apiResource('/services', ServiceController::class);
+});
 
-    Route::get('/pickups/datatable', [PickupController::class, 'datatable'])->name('pickups.datatable');
-    Route::post('/pickups/import/excel', [PickupController::class, 'importExcel'])->name('pickups.import.excel');
-    Route::get('/pickups/export/excel', [PickupController::class, 'exportExcel'])->name('pickups.export.excel');
-    Route::put('/pickups/{pickup}/status', [PickupController::class, 'updateStatus'])->name('pickups.updateStatus');
-    Route::apiResource('/pickups', PickupController::class);
+Route::middleware(['auth', 'role:admin,cashier,owner'])->prefix('/o/{outlet}')->group(function () {
+    // Transaction report
+    Route::get('/report', [TransactionController::class, 'report'])->name('transactions.report');
+    Route::get('/report/export/excel', [TransactionController::class, 'exportExcel'])->name('transactions.export.excel');
+    Route::get('/report/export/pdf', [TransactionController::class, 'exportPDF'])->name('transactions.export.pdf');
+    Route::get('/report/datatable', [TransactionController::class, 'reportDatatable'])->name('transactions.reportDatatable');
 });
 
 Route::middleware('auth', 'role:admin,cashier', 'outlet')->prefix('/o/{outlet}')->group(function () {
@@ -94,16 +105,17 @@ Route::middleware('auth', 'role:admin,cashier', 'outlet')->prefix('/o/{outlet}')
     Route::get('/members/export/pdf', [MemberController::class, 'exportPDF'])->name('members.export.pdf');
     Route::apiResource('/members', MemberController::class);
 
+    // Members management
+    Route::get('/pickups/datatable', [PickupController::class, 'datatable'])->name('pickups.datatable');
+    Route::post('/pickups/import/excel', [PickupController::class, 'importExcel'])->name('pickups.import.excel');
+    Route::get('/pickups/export/excel', [PickupController::class, 'exportExcel'])->name('pickups.export.excel');
+    Route::put('/pickups/{pickup}/status', [PickupController::class, 'updateStatus'])->name('pickups.updateStatus');
+    Route::apiResource('/pickups', PickupController::class);
+
     // New transaction page
     Route::get('/transactions/new-transaction', [TransactionController::class, 'newTransaction']);
     Route::get('/transactions/new-transaction/get-services', [ServiceController::class, 'datatable'])->name('newTransaction.services');
     Route::get('/transactions/new-transaction/get-members', [MemberController::class, 'datatable'])->name('newTransaction.members');
-
-    // Transaction report
-    Route::get('/transactions/report', [TransactionController::class, 'report'])->name('transactions.report');
-    Route::get('/transactions/report/export/excel', [TransactionController::class, 'exportExcel'])->name('transactions.export.excel');
-    Route::get('/transactions/report/export/pdf', [TransactionController::class, 'exportPDF'])->name('transactions.export.pdf');
-    Route::get('/transactions/report/datatable', [TransactionController::class, 'reportDatatable'])->name('transactions.reportDatatable');
 
     // Transaction histories page
     Route::get('/transactions/datatable', [TransactionController::class, 'datatable'])->name('transactions.datatable');
@@ -122,9 +134,4 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::get('/simulation/employee', [SimulationController::class, 'employee']);
     Route::get('/simulation/fee', [SimulationController::class, 'fee']);
     Route::get('/simulation/books', [SimulationController::class, 'books']);
-});
-
-Route::middleware('auth')->group(function () {
-    Route::get('/edit-profile', [UserController::class, 'editProfile'])->name('profile.edit');
-    Route::post('/edit-profile', [UserController::class, 'updateProfile']);
 });
