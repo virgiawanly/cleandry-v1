@@ -20,7 +20,7 @@
                 @endauth
             </a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                <a href="#" class="dropdown-item">
+                <a href="/edit-profile" class="dropdown-item">
                     <i class="fas fa-user mr-2"></i> Edit Profile
                 </a>
                 <form id="logoutForm" action="/logout" method="POST" class="d-inline">

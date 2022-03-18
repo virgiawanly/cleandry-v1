@@ -216,8 +216,8 @@
                 </li>
                 <li class="nav-header">SETTINGS</li>
                 <li class="nav-item">
-                    <a href="/profile/edit" class="nav-link">
-                        <i class="nav-icon fas fa-file-alt"></i>
+                    <a href="/edit-profile" class="nav-link">
+                        <i class="nav-icon fas fa-user-edit"></i>
                         <p>
                             Edit Profile
                         </p>

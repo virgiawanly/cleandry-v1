@@ -123,3 +123,8 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::get('/simulation/fee', [SimulationController::class, 'fee']);
     Route::get('/simulation/books', [SimulationController::class, 'books']);
 });
+
+Route::middleware('auth')->group(function () {
+    Route::get('/edit-profile', [UserController::class, 'editProfile'])->name('profile.edit');
+    Route::post('/edit-profile', [UserController::class, 'updateProfile']);
+});

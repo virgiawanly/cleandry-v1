@@ -6,6 +6,7 @@ use App\Models\Outlet;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
@@ -58,15 +59,17 @@ class UserController extends Controller
         return DataTables::of($users)
             ->addIndexColumn()
             ->addColumn('actions', function ($user) {
-                $editBtn = '<button onclick="editHandler(' . "'" . route('users.update', $user->id) . "'" . ')" class="btn btn-warning mx-1 mb-1">
-                    <i class="fas fa-edit mr-1"></i>
-                    <span>Edit</span>
-                </button>';
-                $deleteBtn = '<button onclick="deleteHandler(' . "'" . route('users.destroy', $user->id) . "'" . ')" class="btn btn-danger mx-1 mb-1">
-                    <i class="fas fa-trash mr-1"></i>
-                    <span>Hapus</span>
-                </button>';
-                return $editBtn . $deleteBtn;
+                $buttons = '<button onclick="editHandler(' . "'" . route('users.update', $user->id) . "'" . ')" class="btn btn-warning mx-1 mb-1">
+                        <i class="fas fa-edit mr-1"></i>
+                        <span>Edit</span>
+                    </button>';
+                if ($user->id !== Auth::id()) {
+                    $buttons .= '<button onclick="deleteHandler(' . "'" . route('users.destroy', $user->id) . "'" . ')" class="btn btn-danger mx-1 mb-1">
+                        <i class="fas fa-trash mr-1"></i>
+                        <span>Hapus</span>
+                    </button>';
+                }
+                return $buttons;
             })->rawColumns(['actions'])->make(true);
     }
 
@@ -166,6 +169,11 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        if($user->id === Auth::id()){
+            return response()->json([
+                'message' => 'Tidak dapat menghapus user',
+            ], Response::HTTP_BAD_REQUEST);
+        }
         if ($user->delete()) {
             return response()->json([
                 'message' => 'User berhasil dihapus'
@@ -175,5 +183,56 @@ class UserController extends Controller
         return response()->json([
             'message' => 'Terjadi kesalahan'
         ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Show edit profile form.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function editProfile()
+    {
+        $user = Auth::user();
+
+        return view('users.edit_profile', [
+            'title' => 'Edit Profile',
+            'breadcrumbs' => [
+                [
+                    'href' => '/edit-profile',
+                    'label' => 'Edit Profile'
+                ]
+            ],
+            'user' => $user
+        ]);
+    }
+
+    /**
+     * Update user profile.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) return redirect()->back();
+
+        $request->validate([
+            'name' => 'required',
+            'phone' => 'required'
+        ]);
+
+        $user->name = $request->name;
+        $user->phone = $request->phone;
+
+        if ($request->has('password') && !empty($request->password)) {
+            $request->validate([
+                'password' => 'required|confirmed',
+            ]);
+            $user->password = bcrypt($request->password);
+        }
+
+        $user->save();
+
+        return redirect()->back()->with('success', 'Profile berhasil diupdate');
     }
 }
