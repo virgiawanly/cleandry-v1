@@ -10,7 +10,7 @@ use App\Models\ServiceType;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response as FacadesResponse;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
@@ -213,6 +213,6 @@ class ServiceController extends Controller
      */
     public function downloadTemplate()
     {
-        return Storage::download('templates/Import_layanan_cleandry.xlsx');
+        return FacadesResponse::download(public_path() . "/templates/Import_layanan_cleandry.xlsx");
     }
 }

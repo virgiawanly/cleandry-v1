@@ -10,14 +10,14 @@ use App\Models\Pickup;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response as FacadesResponse;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class PickupController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display pickup management page.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
@@ -29,7 +29,7 @@ class PickupController extends Controller
             'breadcrumbs' => [
                 [
                     'href' => '/services',
-                    'label' => 'Layanan'
+                    'label' => 'Penjemputan Laundry'
                 ]
             ],
             'outlet' => $outlet,
@@ -38,7 +38,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Datatable
+     * Pickups data for datatable
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
@@ -83,7 +83,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store new pickup data to database.
      *
      * @param  \App\Models\Outlet  $outlet
      * @param  \Illuminate\Http\Request  $request
@@ -110,7 +110,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified pickup.
      *
      * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Pickup  $pickup
@@ -125,7 +125,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Update the specified resource.
+     * Update the specified pickup.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -153,7 +153,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Update the specified resource status.
+     * Update pickup status.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -176,7 +176,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove specified pickup data.
      *
      * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Pickup  $pickup
@@ -196,7 +196,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Save data as excel file.
+     * Export data as excel file.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \App\Exports\PickupsExport
@@ -207,21 +207,21 @@ class PickupController extends Controller
     }
 
     /**
-     * Save data as pdf file.
+     * Export pickups data as pdf file.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Barryvdh\DomPDF\Facade\Pdf
      */
     public function exportPDF(Outlet $outlet)
     {
-        $pickups = Pickup::where('outlet_id', $outlet->id)->with('outlet')->get();
+        $pickups = Pickup::where('outlet_id', $outlet->id)->get();
 
         $pdf = Pdf::loadView('pickups.pdf', ['pickups' => $pickups, 'outlet' => $outlet]);
         return $pdf->stream('Layanan-' . date('dmY') . '.pdf');
     }
 
     /**
-     * Import services data from xlsx file.
+     * Import pickups data from xlsx file.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -240,14 +240,13 @@ class PickupController extends Controller
         ], Response::HTTP_OK);
     }
 
-
     /**
-     * Download excel template.
+     * Download excel import template.
      *
      * @return \Illuminate\Support\Facades\Storage
      */
     public function downloadTemplate()
     {
-        return Storage::download('templates/Import_penjemputan_cleandry.xlsx');
+        return FacadesResponse::download(public_path() . "/templates/Import_penjemputan_cleandry.xlsx");
     }
 }

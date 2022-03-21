@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\Outlet;
 use App\Models\Pickup;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -17,7 +18,6 @@ class PickupsExport implements FromQuery, WithMapping, WithHeadings, WithEvents
 
     private $rowNumber = 0;
     private $outletId;
-    private $outle;
 
     public function whereOutlet(int $outletId)
     {

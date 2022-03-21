@@ -1,10 +1,17 @@
+:root {
+    --green: #209D60;
+    --green-gradient: linear-gradient(to bottom right, #2BB44C, #209D60);
+    --white: #ffffff;
+  }
+
+
 * {
     font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 /* Sidebar */
 .main-sidebar {
-    background: #1f9c62;
+    background: var(--green-gradient);
     box-shadow: none;
 }
 
@@ -36,11 +43,11 @@
 }
 
 .main-sidebar .sidebar .nav-item .nav-link.active .nav-icon {
-    color: #39B152;
+    color: var(--green);
 }
 
 .main-sidebar .sidebar .nav-item .nav-link.active {
-    color: #39B152;
+    color: var(--green);
     box-shadow: none;
     background-color: #ffffff;
 }
@@ -94,15 +101,15 @@
 /* End Table */
 
 .btn.btn-primary {
-    background-color: #1F9C62;
-    border: #1F9C62;
+    background-color: var(--green);
+    border: var(--green);
 }
 
 .btn.btn-primary:hover,
 .btn.btn-primary:focus,
 .btn.btn-primary:active
 {
-    background-color: #1c8353;
+    background-color: #156e45;
 }
 
 .btn.btn-warning {

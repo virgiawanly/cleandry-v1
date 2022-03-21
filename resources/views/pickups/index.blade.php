@@ -40,7 +40,7 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" href="{{ route('pickups.export.excel', $outlet->id) }}">XLSX</a>
-                        <a class="dropdown-item" href="{{ route('members.export.pdf', $outlet->id) }}">PDF</a>
+                        <a class="dropdown-item" href="{{ route('pickups.export.pdf', $outlet->id) }}">PDF</a>
                     </div>
                 </div>
                 <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#import-modal">
@@ -326,6 +326,7 @@
 
         const submitHandler = async () => {
             event.preventDefault();
+            clearErrors();
             let url = $("#form-modal form").attr("action");
             let formData = $("#form-modal form").serialize();
             try {
@@ -334,8 +335,9 @@
                 toast(res.message, "success");
                 table.ajax.reload();
             } catch (err) {
+                console.log(err);
                 if (err.status === 422) validationErrorHandler(err.responseJSON.errors);
-                toast("Terjadi kesalahan", "error");
+                toast(err.responseJSON.message ?? "Terjadi kesalahan", "error");
             }
         };
 

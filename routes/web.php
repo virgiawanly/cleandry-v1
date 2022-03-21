@@ -109,6 +109,7 @@ Route::middleware('auth', 'role:admin,cashier', 'outlet')->prefix('/o/{outlet}')
     Route::get('/pickups/datatable', [PickupController::class, 'datatable'])->name('pickups.datatable');
     Route::post('/pickups/import/excel', [PickupController::class, 'importExcel'])->name('pickups.import.excel');
     Route::get('/pickups/export/excel', [PickupController::class, 'exportExcel'])->name('pickups.export.excel');
+    Route::get('/pickups/export/pdf', [PickupController::class, 'exportPDF'])->name('pickups.export.pdf');
     Route::put('/pickups/{pickup}/status', [PickupController::class, 'updateStatus'])->name('pickups.updateStatus');
     Route::apiResource('/pickups', PickupController::class);
 
