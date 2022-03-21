@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\OutletsExport;
+use App\Imports\OutletsImport;
 use App\Models\Outlet;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response as FacadesResponse;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class OutletController extends Controller
@@ -191,5 +196,58 @@ class OutletController extends Controller
         return response()->json([
             'message' => 'Terjadi kesalahan'
         ], Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Export outlets data as excel file.
+     *
+     * @return \App\Exports\OutletsExport
+     */
+    public function exportExcel()
+    {
+        return (new OutletsExport)->download('Outlet-' . date('d-m-Y') . '.xlsx');
+    }
+
+    /**
+     * Export outlets data as pdf file.
+     *
+     * @return \Barryvdh\DomPDF\Facade\Pdf
+     */
+    public function exportPDF()
+    {
+        $outlets = Outlet::all();
+
+        $pdf = Pdf::loadView('outlets.pdf', ['outlets' => $outlets]);
+        return $pdf->stream('Outlet-' . date('dmY') . '.pdf');
+    }
+
+
+    /**
+     * Import outlets data from xlsx file.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse;
+     */
+    public function importExcel(Request $request)
+    {
+        $request->validate([
+            'file_import' => 'required|file|mimes:xlsx'
+        ]);
+
+        Excel::import(new OutletsImport, $request->file('file_import'));
+
+        return response()->json([
+            'message' => 'Import data berhasil'
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * Download excel import template.
+     *
+     * @return \Illuminate\Support\Facades\Storage
+     */
+    public function downloadTemplate()
+    {
+        return FacadesResponse::download(public_path() . "/templates/Import_outlet_cleandry.xlsx");
     }
 }

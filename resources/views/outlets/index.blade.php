@@ -11,6 +11,20 @@
                 <div class="card-header">
                     <h3 class="card-title">Data outlet</h3>
                     <div class="card-tools">
+                        <div class="dropdown d-inline">
+                            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-upload mr-1"></i>
+                                <span>Export</span>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" href="{{ route('outlets.export.excel') }}">XLSX</a>
+                                <a class="dropdown-item" href="{{ route('outlets.export.pdf') }}">PDF</a>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#import-modal">
+                            <i class="fas fa-download mr-1"></i><span>Import</span>
+                        </button>
                         <button class="btn btn btn-primary" onclick="createHandler('{{ route('outlets.store') }}')">
                             <i class="far fa-plus-square mr-1"></i><span>Tambah Outlet</span>
                         </button>
@@ -61,8 +75,7 @@
                         </div>
                         <div class="form-group">
                             <label for="address">Alamat</label>
-                            <textarea name="address" id="address" rows="4" class="form-control"
-                                placeholder="Alamat lengkap oulet"></textarea>
+                            <textarea name="address" id="address" rows="4" class="form-control" placeholder="Alamat lengkap oulet"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer bg-whitesmoke br">
@@ -71,6 +84,53 @@
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
+
+
+    <!-- Import Modal -->
+    <div class="modal fade" id="import-modal" tabindex="-1" aria-labelledby="import-modal-label" aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="{{ route('outlets.import.excel') }}" method="POST" enctype="multipart/form-data"
+                id="import-form">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="import-modal-label">Import Data Outlet</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="d-none align-items-center justify-content-between bg-white p-2 shadow-md mb-3"
+                            id="import-file-card">
+                            <div class="d-flex align-items-center">
+                                <div class="h1 p-3 mb-0"><i class="fa fa-file-excel"></i></div>
+                                <div>
+                                    <h6 class="mb-0 filename">File.xlsx</h6>
+                                    <div class="text-sm filesize">30kb</div>
+                                </div>
+                            </div>
+                            <div class="p-3">
+                                <button type="button" class="close" id="remove-import-file">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center py-5" id="select-import-file">
+                            <div>Upload file</div>
+                            <label for="file-import" class="btn btn-info mt-1 font-weight-normal">
+                                <span>Pilih file</span>
+                            </label>
+                            <div>Klik <a href="{{ route('outlets.template.download') }}">disini</a> untuk
+                                mengunduh
+                                template</div>
+                        </div>
+                        <input type="file" class="custom-file-input" id="file-import" name="file_import" hidden>
+                        <button class="btn btn-primary w-100"><i class="fas fa-download mr-2"></i>Import data</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 @endpush
@@ -105,6 +165,21 @@
                     }
                 ]
             });
+
+            $("#import-form").on("submit", importHandler);
+
+            $('[name="file_import"]').on("change", () => {
+                let filename = $("#file-import")[0].files[0].name;
+                let filesize = $("#file-import")[0].files[0].size;
+                $(".filename").text(filename ?? "");
+                $(".filesize").text(formatBytes(filesize) ?? "");
+                $("#import-file-card").removeClass("d-none");
+                $("#import-file-card").addClass("d-flex");
+                $("#select-import-file").addClass("d-none");
+                $("#select-import-file").removeClass("d-block");
+            });
+
+            $("#remove-import-file").on("click", removeImportFile);
         });
 
         const createHandler = (url) => {
@@ -180,5 +255,46 @@
                 }
             }
         }
+
+        const importHandler = async () => {
+            event.preventDefault();
+            let url = $("#import-form").attr("action");
+            let formData = new FormData();
+            formData.append("file_import", $("#file-import")[0].files[0]);
+            $("#import-modal").modal("hide");
+            try {
+                let res = await $.ajax({
+                    method: "post",
+                    headers: {
+                        "X-CSRF-Token": $("[name=_token]").val(),
+                    },
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    data: formData,
+                    enctype: "multipart/form-data",
+                    url: url,
+                });
+                toast(res.message, "success");
+                table.ajax.reload();
+                removeImportFile();
+            } catch (err) {
+                console.log(err.responseJSON);
+                toast(
+                    err.status === 422 ? "File tidak valid" : "Terjadi kesalahan",
+                    "error"
+                );
+            }
+        };
+
+        const removeImportFile = () => {
+            $("#file-import").val(null);
+            $(".filename").val("");
+            $(".filesize").val("");
+            $("#import-file-card").addClass("d-none");
+            $("#import-file-card").removeClass("d-flex");
+            $("#select-import-file").removeClass("d-none");
+            $("#select-import-file").addClass("d-block");
+        };
     </script>
 @endpush

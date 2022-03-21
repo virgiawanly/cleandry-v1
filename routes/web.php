@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/download/template/inventories', [InventoryController::class, 'downloadTemplate'])->name('inventories.template.download');
     Route::get('/download/template/members', [MemberController::class, 'downloadTemplate'])->name('members.template.download');
     Route::get('/download/template/pickups', [PickupController::class, 'downloadTemplate'])->name('pickups.template.download');
+    Route::get('/download/template/outlets', [OutletController::class, 'downloadTemplate'])->name('outlets.template.download');
 
     // Logout
     Route::middleware('auth')->post('/logout', [AuthController::class, 'logout']);
@@ -53,6 +54,9 @@ Route::middleware('auth', 'role:admin')->group(function () {
     // Outlets management
     Route::get('/outlets/data', [OutletController::class, 'data'])->name('outlets.data');
     Route::get('/outlets/datatable', [OutletController::class, 'datatable'])->name('outlets.datatable');
+    Route::post('/outlets/import/excel', [OutletController::class, 'importExcel'])->name('outlets.import.excel');
+    Route::get('/outlets/export/excel', [OutletController::class, 'exportExcel'])->name('outlets.export.excel');
+    Route::get('/outlets/export/pdf', [OutletController::class, 'exportPDF'])->name('outlets.export.pdf');
     Route::apiResource('/outlets', OutletController::class);
 
     // Users management
