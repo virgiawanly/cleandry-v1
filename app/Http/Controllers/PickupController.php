@@ -17,7 +17,7 @@ use Yajra\DataTables\DataTables;
 class PickupController extends Controller
 {
     /**
-     * Display pickup management page.
+     * Menampilkan halaman penjemputan laundry.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
@@ -38,7 +38,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Pickups data for datatable
+     * Mendapatkan data penjemputan untuk ditampilkan dengan datatable.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
@@ -83,7 +83,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Store new pickup data to database.
+     * Menyimpan data penjemputan baru ke database.
      *
      * @param  \App\Models\Outlet  $outlet
      * @param  \Illuminate\Http\Request  $request
@@ -110,7 +110,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Display the specified pickup.
+     * Mendapatkan data penjemputan berdasarkan id penjemputan.
      *
      * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Pickup  $pickup
@@ -125,7 +125,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Update the specified pickup.
+     * Mengupdate data penjemputan.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -153,7 +153,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Update pickup status.
+     * Mengupdate status penjemputan.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -176,7 +176,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Remove specified pickup data.
+     * Menghapus data penjemputan.
      *
      * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Pickup  $pickup
@@ -196,7 +196,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Export data as excel file.
+     * Simpan data penjemputan sebagai file excel (.xlsx).
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \App\Exports\PickupsExport
@@ -207,7 +207,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Export pickups data as pdf file.
+     * Simpan data penjemputan sebagai file pdf.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Barryvdh\DomPDF\Facade\Pdf
@@ -221,7 +221,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Import pickups data from xlsx file.
+     * Import data penjemputan dari file excel (.xlsx).
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -241,7 +241,7 @@ class PickupController extends Controller
     }
 
     /**
-     * Download excel import template.
+     * Download template file excel untuk import data penjemputan.
      *
      * @return \Illuminate\Support\Facades\Storage
      */

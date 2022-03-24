@@ -260,6 +260,14 @@
                             </p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="/simulation/transactions" class="nav-link">
+                            <i class="nav-icon fas fa-book"></i>
+                            <p>
+                                Simulasi Transaksi Barang
+                            </p>
+                        </a>
+                    </li>
                 @endif
             </ul>
         </nav>

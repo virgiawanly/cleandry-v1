@@ -11,6 +11,11 @@ class Pickup extends Model
 
     protected $guarded = ['id'];
 
+    /**
+     * Mendapatkan data member dari penjemputan.
+     *
+     * @return int
+     */
     public function member()
     {
         return $this->belongsTo(Member::class, 'member_id');

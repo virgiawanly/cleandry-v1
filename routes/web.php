@@ -24,7 +24,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Login
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/login', [AuthController::class, 'authenticate']);
@@ -139,4 +138,5 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::get('/simulation/employee', [SimulationController::class, 'employee']);
     Route::get('/simulation/fee', [SimulationController::class, 'fee']);
     Route::get('/simulation/books', [SimulationController::class, 'books']);
+    Route::get('/simulation/transactions', [SimulationController::class, 'transactions']);
 });

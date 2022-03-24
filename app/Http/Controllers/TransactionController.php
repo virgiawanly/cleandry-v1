@@ -18,7 +18,7 @@ use Yajra\DataTables\DataTables;
 class TransactionController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan halaman data transaksi
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
@@ -38,7 +38,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * Return data for DataTables.
+     * Mengirim data transaksi berdasarkan status transaksi untuk ditampilkan menggunakan datatable.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -95,7 +95,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * Show new transaction form.
+     * Menampilkan halaman entri transaksi baru.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -120,7 +120,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan data transaksi baru ke database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -202,7 +202,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Mengambil data transaksi berdasarkan id transaksi.
      *
      * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Transaction  $transaction
@@ -224,7 +224,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Menampilkan halaman faktur transaksi.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -262,7 +262,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Menampilkan faktur transaksi berupa file pdf.
      *
      * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Transaction  $transaction
@@ -278,7 +278,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * Update transaction status.
+     * Mengupdate status transaksi.
      *
      * @param  \App\Models\Outlet
      * @param  \App\Models\Transaction
@@ -308,7 +308,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * Update transaction payment status.
+     * Mengupdate status pembayaran transaksi.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -341,7 +341,7 @@ class TransactionController extends Controller
 
 
     /**
-     * Send transaction invoice via whatsapp.
+     * Mengirim faktur transaksi lewat WhatsApp.
      *
      * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Transaction  $transaction
@@ -378,7 +378,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Menampilkan halaman laporan transaksi dengan data kosong.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
@@ -398,7 +398,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Mengambil data transaksi dari rentang waktu tertentu untuk ditampilkan menggunakan datatable.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -428,7 +428,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * Save transactions data as excel file.
+     * Simpan data transaksi sebagai file excel (.xlsx)
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -443,7 +443,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * Save transactions data as pdf file.
+     * Simpan data transaksi sebagai file pdf
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet

@@ -10,7 +10,7 @@ class Transaction extends Model
     use HasFactory;
 
     /**
-     * The attributes that are mass assignable.
+     * Atribut mass assignable.
      *
      * @var array<int, string>
      */
@@ -31,7 +31,7 @@ class Transaction extends Model
     ];
 
     /**
-     * Generate & return new invoice number
+     * Menggenerate kode faktur baru berdasarkan transaksi terakhir.
      *
      * @return string $invoice
      */
@@ -43,7 +43,7 @@ class Transaction extends Model
     }
 
     /**
-     * Return transaction details
+     * Mendapatkan data detail transaksi.
      *
      * @return \App\Models\TransactionDetail
      */
@@ -54,9 +54,9 @@ class Transaction extends Model
 
 
     /**
-     * Return transaction's member
+     * Mendapatkan data member transaksi.
      *
-     * @return \App\Models\TransactionDetail
+     * @return \App\Models\Member
      */
     public function member()
     {
@@ -64,9 +64,9 @@ class Transaction extends Model
     }
 
     /**
-     * Return transaction's user
+     * Mendapatkan data user/operator transaksi.
      *
-     * @return \App\Models\TransactionDetail
+     * @return \App\Models\User
      */
     public function user()
     {
@@ -74,7 +74,7 @@ class Transaction extends Model
     }
 
     /**
-     * Return transaction's outlet
+     * Mendapatkan data outlet transaksi.
      *
      * @return \App\Models\Outlet
      */
@@ -83,6 +83,11 @@ class Transaction extends Model
         return $this->belongsTo(Outlet::class);
     }
 
+    /**
+     * Menghitung total harga transaksi, tidak termasuk diskon, pajak, dan biaya tambahan.
+     *
+     * @return int
+     */
     public function getTotalPrice()
     {
         return $this->details->reduce(function ($total, $detail) {
@@ -90,16 +95,31 @@ class Transaction extends Model
         });
     }
 
+    /**
+     * Menghitung total diskon transaksi.
+     *
+     * @return int
+     */
     public function getTotalDiscount()
     {
         return $this->discount_type == 'percent' ? $this->getTotalPrice() * ($this->discount / 100) : $this->discount;
     }
 
+    /**
+     * Menghitung total pajak transaksi.
+     *
+     * @return int
+     */
     public function getTotalTax()
     {
         return $this->getTotalPrice() * ($this->tax / 100);
     }
 
+    /**
+     * Menghitung total biaya transaksi termasuk diskon, pajak, dan biaya tambahan.
+     *
+     * @return int
+     */
     public function getTotalPayment()
     {
         return $this->getTotalPrice() - $this->getTotalDiscount() + $this->getTotalTax() + $this->additional_cost;

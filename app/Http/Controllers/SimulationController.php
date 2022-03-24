@@ -12,11 +12,11 @@ class SimulationController extends Controller
             'title' => 'Simulasi Data Karyawan',
             'breadcrumbs' => [
                 [
-                    'href' => '/simluation/employee',
+                    'href' => '/simulation/employee',
                     'label' => 'Simulasi'
                 ],
                 [
-                    'href' => '/simluation/employee',
+                    'href' => '/simulation/employee',
                     'label' => 'Karyawan'
                 ],
             ],
@@ -29,11 +29,11 @@ class SimulationController extends Controller
             'title' => 'Simulasi Gaji Karyawan',
             'breadcrumbs' => [
                 [
-                    'href' => '/simluation/employee',
+                    'href' => '/simulation/employee',
                     'label' => 'Simulasi'
                 ],
                 [
-                    'href' => '/simluation/employee',
+                    'href' => '/simulation/employee',
                     'label' => 'Karyawan'
                 ],
             ],
@@ -46,12 +46,29 @@ class SimulationController extends Controller
             'title' => 'Simulasi Data Buku',
             'breadcrumbs' => [
                 [
-                    'href' => '/simluation/books',
+                    'href' => '/simulation/books',
                     'label' => 'Simulasi'
                 ],
                 [
-                    'href' => '/simluation/books',
+                    'href' => '/simulation/books',
                     'label' => 'Data Buku'
+                ],
+            ],
+        ]);
+    }
+
+    public function transactions()
+    {
+        return view('simulation.transactions', [
+            'title' => 'Simulasi Transaksi Barang',
+            'breadcrumbs' => [
+                [
+                    'href' => '/simulation/transactions',
+                    'label' => 'Simulasi'
+                ],
+                [
+                    'href' => '/simulation/transactions',
+                    'label' => 'Transaksi Barang'
                 ],
             ],
         ]);
