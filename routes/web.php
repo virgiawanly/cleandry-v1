@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PageController;
@@ -39,6 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/download/template/members', [MemberController::class, 'downloadTemplate'])->name('members.template.download');
     Route::get('/download/template/pickups', [PickupController::class, 'downloadTemplate'])->name('pickups.template.download');
     Route::get('/download/template/outlets', [OutletController::class, 'downloadTemplate'])->name('outlets.template.download');
+    Route::get('/download/template/items', [ItemController::class, 'downloadTemplate'])->name('items.template.download');
 
     // Logout
     Route::middleware('auth')->post('/logout', [AuthController::class, 'logout']);
@@ -77,6 +79,14 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::get('/inventories/export/excel', [InventoryController::class, 'exportExcel'])->name('inventories.export.excel');
     Route::get('/inventories/export/pdf', [InventoryController::class, 'exportPDF'])->name('inventories.export.pdf');
     Route::apiResource('/inventories', InventoryController::class);
+
+    // Items management
+    Route::get('/items/datatable', [ItemController::class, 'datatable'])->name('items.datatable');
+    Route::post('/items/import/excel', [ItemController::class, 'importExcel'])->name('items.import.excel');
+    Route::get('/items/export/excel', [ItemController::class, 'exportExcel'])->name('items.export.excel');
+    Route::get('/items/export/pdf', [ItemController::class, 'exportPDF'])->name('items.export.pdf');
+    Route::put('/items/{item}/status', [ItemController::class, 'updateStatus'])->name('items.updateStatus');
+    Route::apiResource('/items', ItemController::class);
 });
 
 Route::middleware('auth', 'outlet')->prefix('/o/{outlet}')->group(function () {

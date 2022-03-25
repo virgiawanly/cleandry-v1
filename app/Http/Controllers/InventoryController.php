@@ -176,7 +176,7 @@ class InventoryController extends Controller
     }
 
     /**
-     * Import services data from xlsx file.
+     * Import inventories data from xlsx file.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
