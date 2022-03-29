@@ -196,10 +196,10 @@ class PickupController extends Controller
     }
 
     /**
-     * Simpan data penjemputan sebagai file excel (.xlsx).
+     * Export data ke file excel (.xlsx)
      *
      * @param  \App\Models\Outlet  $outlet
-     * @return \App\Exports\PickupsExport
+     * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function exportExcel(Outlet $outlet)
     {

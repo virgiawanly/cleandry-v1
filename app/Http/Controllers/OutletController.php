@@ -16,7 +16,7 @@ use Yajra\DataTables\DataTables;
 class OutletController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan halaman manajemen outlet.
      *
      * @return \Illuminate\Http\Response
      */
@@ -34,7 +34,7 @@ class OutletController extends Controller
     }
 
     /**
-     * Show select outlet page.
+     * Menampilkan halaman pemilihan outlet untuk admin.
      *
      * @return \Illuminate\Http\Response
      */
@@ -54,7 +54,7 @@ class OutletController extends Controller
     }
 
     /**
-     * Set selected outlet session.
+     * Menyimpan session outlet aktif yang dipilih admin.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
@@ -74,7 +74,7 @@ class OutletController extends Controller
     }
 
     /**
-     * Return all outlets data.
+     * Mendapatkan data outlet.
      *
      * @return \Illuminate\Http\Response
      */
@@ -89,7 +89,7 @@ class OutletController extends Controller
     }
 
     /**
-     * Return data for DataTables.
+     * Mendapatkan data outlet untuk datatable.
      *
      * @return \Illuminate\Http\Response
      */
@@ -113,7 +113,7 @@ class OutletController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan data outlet baru ke database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -140,7 +140,7 @@ class OutletController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Mendapatkan data outlet berdasarkan id tertentu.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
@@ -154,7 +154,7 @@ class OutletController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mengupdate data outlet di database berdasarkan id tertentu.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -180,7 +180,7 @@ class OutletController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menghapus data outlet berdasarkan id terntentu.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
@@ -199,9 +199,9 @@ class OutletController extends Controller
     }
 
     /**
-     * Export outlets data as excel file.
+     * Export data ke file excel (.xlsx).
      *
-     * @return \App\Exports\OutletsExport
+     * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function exportExcel()
     {
@@ -209,7 +209,7 @@ class OutletController extends Controller
     }
 
     /**
-     * Export outlets data as pdf file.
+     * Export data ke file pdf.
      *
      * @return \Barryvdh\DomPDF\Facade\Pdf
      */
@@ -223,7 +223,7 @@ class OutletController extends Controller
 
 
     /**
-     * Import outlets data from xlsx file.
+     * Import data dari file excel (.xlsx).
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse;
@@ -242,7 +242,7 @@ class OutletController extends Controller
     }
 
     /**
-     * Download excel import template.
+     * Download template import excel.
      *
      * @return \Illuminate\Support\Facades\Storage
      */

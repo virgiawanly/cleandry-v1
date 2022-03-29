@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Exports\TransactionsExport;
-use App\Http\Resources\TransactionCollection;
-use App\Models\Member;
 use App\Models\Outlet;
 use App\Models\Service;
 use App\Models\Transaction;
@@ -18,7 +16,7 @@ use Yajra\DataTables\DataTables;
 class TransactionController extends Controller
 {
     /**
-     * Menampilkan halaman data transaksi
+     * Menampilkan halaman data transaksi.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
@@ -432,7 +430,7 @@ class TransactionController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
-     * @return \App\Exports\MembersExport
+     * @return \Illuminate\Http\Response
      */
     public function exportExcel(Request $request, Outlet $outlet)
     {
@@ -443,7 +441,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * Simpan data transaksi sebagai file pdf
+     * Simpan data transaksi sebagai file pdf.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet

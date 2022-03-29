@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 
 class SimulationController extends Controller
 {
+    /**
+     * Menampilkan halaman simulasi karyawan.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function employee()
     {
         return view('simulation.employee', [
@@ -23,6 +28,11 @@ class SimulationController extends Controller
         ]);
     }
 
+    /**
+     * Menampilkan halaman simulasi gaji karyawan.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function fee()
     {
         return view('simulation.fee', [
@@ -40,6 +50,11 @@ class SimulationController extends Controller
         ]);
     }
 
+    /**
+     * Menampilkan halaman simulasi data buku.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function books()
     {
         return view('simulation.books', [
@@ -57,6 +72,11 @@ class SimulationController extends Controller
         ]);
     }
 
+    /**
+     * Menampilkan halaman simulasi transaksi barang.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function transactions()
     {
         return view('simulation.transactions', [
@@ -69,6 +89,28 @@ class SimulationController extends Controller
                 [
                     'href' => '/simulation/transactions',
                     'label' => 'Transaksi Barang'
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Menampilkan halaman simulasi transaksi cucian.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function serviceTransactions()
+    {
+        return view('simulation.service_transactions', [
+            'title' => 'Simulasi Transaksi Cucian',
+            'breadcrumbs' => [
+                [
+                    'href' => '/simulation/service-transactions',
+                    'label' => 'Simulasi'
+                ],
+                [
+                    'href' => '/simulation/service-transactions',
+                    'label' => 'Transaksi Cucian'
                 ],
             ],
         ]);

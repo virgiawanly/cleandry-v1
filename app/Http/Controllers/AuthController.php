@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     /**
-     * Show login form
+     * Menampilkan halaman form login.
      *
      * @return \Illuminate\Http\Response
      */
@@ -18,7 +18,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Handle an authentication attempt.
+     * Menangani percobaan login / autentikasi.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -42,7 +42,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Log the user out of the application.
+     * Logout user (menghapus session login).
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response

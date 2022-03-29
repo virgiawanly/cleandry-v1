@@ -15,7 +15,7 @@ use Yajra\DataTables\DataTables;
 class InventoryController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan halaman barang inventaris.
      *
      * @return \Illuminate\Http\Response
      */
@@ -33,7 +33,7 @@ class InventoryController extends Controller
     }
 
     /**
-     * Return data for DataTables.
+     * Mendapatkan data inventaris untuk datatable.
      *
      * @return \Illuminate\Http\Response
      */
@@ -57,7 +57,7 @@ class InventoryController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan data inventaris baru ke database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -88,7 +88,7 @@ class InventoryController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Mendapatkan data inventaris berdasarkan id tertentu.
      *
      * @param  \App\Models\Inventory  $inventory
      * @return \Illuminate\Http\Response
@@ -102,7 +102,7 @@ class InventoryController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mengupdate data inventaris di database berdasarkan id tertentu.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Inventory  $inventory
@@ -134,7 +134,7 @@ class InventoryController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menghapus data inventaris di database.
      *
      * @param  \App\Models\Inventory  $inventory
      * @return \Illuminate\Http\Response
@@ -153,9 +153,9 @@ class InventoryController extends Controller
     }
 
     /**
-     * Save inventories data as excel file.
+     * Export data ke file excel (.xlsx).
      *
-     * @return \App\Exports\InventoriesExport
+     * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function exportExcel()
     {
@@ -163,9 +163,9 @@ class InventoryController extends Controller
     }
 
     /**
-     * Save inventories data as pdf file.
+     * Export data ke file pdf.
      *
-     * @return \Barryvdh\DomPDF\Facade\Pdf
+     * @return \Illuminate\Http\Response
      */
     public function exportPDF()
     {
@@ -176,11 +176,10 @@ class InventoryController extends Controller
     }
 
     /**
-     * Import inventories data from xlsx file.
+     * Import data dari file excel (.xlsx).
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Outlet  $outlet
-     * @return \Illuminate\Http\RedirectResponse;
+     * @return \Illuminate\Http\Response;
      */
     public function importExcel(Request $request)
     {
@@ -196,9 +195,9 @@ class InventoryController extends Controller
     }
 
     /**
-     * Download excel template.
+     * Download template untuk import excel.
      *
-     * @return \Illuminate\Support\Facades\Storage
+     * @return \Illuminate\Http\Response
      */
     public function downloadTemplate()
     {

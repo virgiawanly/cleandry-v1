@@ -64,6 +64,14 @@
                             </p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="/uses" class="nav-link">
+                            <i class="nav-icon fas fa-box"></i>
+                            <p>
+                                Data Penggunaan Barang
+                            </p>
+                        </a>
+                    </li>
                 @endif
                 @if (Auth::user()->role === 'admin' || Auth::user()->role === 'cashier')
                     <li class="nav-header">OUTLET</li>
@@ -273,6 +281,14 @@
                             <i class="nav-icon fas fa-book"></i>
                             <p>
                                 Simulasi Transaksi Barang
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/simulation/service-transactions" class="nav-link">
+                            <i class="nav-icon fas fa-book"></i>
+                            <p>
+                                Simulasi Transaksi Cucian
                             </p>
                         </a>
                     </li>

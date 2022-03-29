@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\ItemUsesController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PageController;
@@ -41,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/download/template/pickups', [PickupController::class, 'downloadTemplate'])->name('pickups.template.download');
     Route::get('/download/template/outlets', [OutletController::class, 'downloadTemplate'])->name('outlets.template.download');
     Route::get('/download/template/items', [ItemController::class, 'downloadTemplate'])->name('items.template.download');
+    Route::get('/download/template/item-uses', [ItemUsesController::class, 'downloadTemplate'])->name('uses.template.download');
 
     // Logout
     Route::middleware('auth')->post('/logout', [AuthController::class, 'logout']);
@@ -87,6 +89,14 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::get('/items/export/pdf', [ItemController::class, 'exportPDF'])->name('items.export.pdf');
     Route::put('/items/{item}/status', [ItemController::class, 'updateStatus'])->name('items.updateStatus');
     Route::apiResource('/items', ItemController::class);
+
+    // Item uses management
+    Route::get('/uses/datatable', [ItemUsesController::class, 'datatable'])->name('uses.datatable');
+    Route::post('/uses/import/excel', [ItemUsesController::class, 'importExcel'])->name('uses.import.excel');
+    Route::get('/uses/export/excel', [ItemUsesController::class, 'exportExcel'])->name('uses.export.excel');
+    Route::get('/uses/export/pdf', [ItemUsesController::class, 'exportPDF'])->name('uses.export.pdf');
+    Route::put('/uses/{itemUses}/status', [ItemUsesController::class, 'updateStatus'])->name('uses.updateStatus');
+    Route::apiResource('/uses', ItemUsesController::class)->parameter('uses', 'itemUses');
 });
 
 Route::middleware('auth', 'outlet')->prefix('/o/{outlet}')->group(function () {
@@ -149,4 +159,5 @@ Route::middleware('auth', 'role:admin')->group(function () {
     Route::get('/simulation/fee', [SimulationController::class, 'fee']);
     Route::get('/simulation/books', [SimulationController::class, 'books']);
     Route::get('/simulation/transactions', [SimulationController::class, 'transactions']);
+    Route::get('/simulation/service-transactions', [SimulationController::class, 'serviceTransactions']);
 });

@@ -16,7 +16,7 @@ use Yajra\DataTables\DataTables;
 class MemberController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan halaman manajemen member.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
@@ -36,7 +36,7 @@ class MemberController extends Controller
     }
 
     /**
-     * Return data for DataTables.
+     * Mendapatkan data member untuk datatable.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
@@ -61,7 +61,7 @@ class MemberController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan data member baru ke database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -93,7 +93,7 @@ class MemberController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Mendapatkan data member berdasarkan id tertentu.
      *
      * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Member  $member
@@ -108,7 +108,7 @@ class MemberController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mengupdate data member di database berdasarkan id tertentu.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -141,7 +141,7 @@ class MemberController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menghapus data member berdasarkan id tertentu.
      *
      * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Member  $member
@@ -161,10 +161,10 @@ class MemberController extends Controller
     }
 
     /**
-     * Save members data as excel file.
+     * Export data ke file excel (.xlsx).
      *
      * @param  \App\Models\Outlet  $outlet
-     * @return \App\Exports\MembersExport
+     * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function exportExcel(Outlet $outlet)
     {
@@ -172,7 +172,7 @@ class MemberController extends Controller
     }
 
     /**
-     * Save members data as pdf file.
+     * Export data ke file pdf.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Barryvdh\DomPDF\Facade\Pdf
@@ -186,7 +186,7 @@ class MemberController extends Controller
     }
 
     /**
-     * Import members data from xlsx file.
+     * Import data dari file excel (.xlsx).
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -206,7 +206,7 @@ class MemberController extends Controller
     }
 
     /**
-     * Download excel template.
+     * Download template import excel.
      *
      * @return \Illuminate\Support\Facades\Storage
      */

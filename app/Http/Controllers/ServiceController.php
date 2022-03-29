@@ -17,7 +17,7 @@ use Yajra\DataTables\DataTables;
 class ServiceController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan halaman manajemen layanan.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
@@ -40,7 +40,7 @@ class ServiceController extends Controller
     }
 
     /**
-     * Datatable
+     * Mendapatkan data layanan untuk datatable.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
@@ -65,10 +65,10 @@ class ServiceController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan data layanan baru ke database.
      *
-     * @param  \App\Models\Outlet  $outlet
      * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Outlet  $outlet
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, Outlet $outlet)
@@ -95,7 +95,7 @@ class ServiceController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Mendapatkan data layanan berdasarkan id tertentu.
      *
      * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Service  $service
@@ -111,7 +111,7 @@ class ServiceController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mengupdate data layanan berdasarkan id tertentu.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -137,12 +137,12 @@ class ServiceController extends Controller
         $service->update($payload);
 
         return response()->json([
-            'message' => 'Layanan berhasil ditambahkan'
+            'message' => 'Layanan berhasil diupdate'
         ], Response::HTTP_OK);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menghapus data layanan berdasarkan id tertentu.
      *
      * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Service  $service
@@ -162,10 +162,10 @@ class ServiceController extends Controller
     }
 
     /**
-     * Save services data as excel file.
+     * Export data ke file excel (.xlsx).
      *
      * @param  \App\Models\Outlet  $outlet
-     * @return \App\Exports\ServicesExport
+     * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function exportExcel(Outlet $outlet)
     {
@@ -173,7 +173,7 @@ class ServiceController extends Controller
     }
 
     /**
-     * Save services data as pdf file.
+     * Export data ke file pdf.
      *
      * @param  \App\Models\Outlet  $outlet
      * @return \Barryvdh\DomPDF\Facade\Pdf
@@ -187,7 +187,7 @@ class ServiceController extends Controller
     }
 
     /**
-     * Import services data from xlsx file.
+     * Import data dari file excel (.xlsx).
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Outlet  $outlet
@@ -207,7 +207,7 @@ class ServiceController extends Controller
     }
 
     /**
-     * Download excel template.
+     * Download template import excel.
      *
      * @return \Illuminate\Support\Facades\Storage
      */

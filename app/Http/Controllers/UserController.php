@@ -12,7 +12,7 @@ use Yajra\DataTables\DataTables;
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan halaman manajemen user.
      *
      * @return \Illuminate\Http\Response
      */
@@ -33,7 +33,7 @@ class UserController extends Controller
     }
 
     /**
-     * Return all users data.
+     * Mendapatkan semua data user di database.
      *
      * @return \Illuminate\Http\Response
      */
@@ -48,7 +48,7 @@ class UserController extends Controller
     }
 
     /**
-     * Return data for DataTables.
+     * Mendapatkan data user untuk datatable.
      *
      * @return \Illuminate\Http\Response
      */
@@ -74,7 +74,7 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan data user baru ke database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -108,7 +108,7 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Menampilkan data user berdasarkan id tertentu.
      *
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
@@ -122,7 +122,7 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mengupdate data user berdasarkan id tertentu.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\User  $user
@@ -162,7 +162,7 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menghapus data user di database berdasarkan id tertentu.
      *
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
@@ -186,7 +186,7 @@ class UserController extends Controller
     }
 
     /**
-     * Show edit profile form.
+     * Menampilkan halaman edit profile.
      *
      * @return \Illuminate\Http\Response
      */
@@ -207,7 +207,7 @@ class UserController extends Controller
     }
 
     /**
-     * Update user profile.
+     * Mengupdate data profile user.
      *
      * @return \Illuminate\Http\Response
      */

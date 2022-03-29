@@ -10,7 +10,7 @@ use Yajra\DataTables\DataTables;
 class ServiceTypeController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan halaman manajemen jenis layanan.
      *
      * @return \Illuminate\Http\Response
      */
@@ -28,7 +28,7 @@ class ServiceTypeController extends Controller
     }
 
     /**
-     * Return data for DataTables.
+     * Mendapatkan data jenis layanan untuk datatable.
      *
      * @return \Illuminate\Http\Response
      */
@@ -52,7 +52,7 @@ class ServiceTypeController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan data jenis layanan baru ke database.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -73,7 +73,7 @@ class ServiceTypeController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Mendapatkan data jenis layanan berdasarkan id tertentu.
      *
      * @param  \App\Models\ServiceType  $serviceType
      * @return \Illuminate\Http\Response
@@ -87,7 +87,7 @@ class ServiceTypeController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mengupdate data jenis layanan berdasarkan id tertentu.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\ServiceType  $serviceType
@@ -109,7 +109,7 @@ class ServiceTypeController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menghapus data jenis layanan berdasarkan id tertentu.
      *
      * @param  \App\Models\ServiceType  $serviceType
      * @return \Illuminate\Http\Response

@@ -6,6 +6,7 @@ use App\Exports\ItemsExport;
 use App\Imports\ItemsImport;
 use App\Models\Item;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Response as FacadesResponse;
@@ -98,11 +99,17 @@ class ItemController extends Controller
             'status' => $request->status,
         ];
 
-        Item::create($payload);
+        try {
+            Item::create($payload);
 
-        return response()->json([
-            'message' => 'Data barang berhasil ditambahkan',
-        ], Response::HTTP_OK);
+            return response()->json([
+                'message' => 'Data barang berhasil ditambahkan',
+            ], Response::HTTP_OK);
+        } catch (Exception $error) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan',
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -163,7 +170,6 @@ class ItemController extends Controller
      * Mengupdate status ketersediaan barang.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Outlet  $outlet
      * @param  \App\Models\Item  $item
      * @return \Illuminate\Http\Response
      */
@@ -209,9 +215,9 @@ class ItemController extends Controller
     }
 
     /**
-     * Export data barang sebagai file excel (.xlsx)
+     * Export data ke file excel (.xlsx).
      *
-     * @return \App\Exports\ItemsExport
+     * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\BinaryFileResponse
      */
     public function exportExcel()
     {
@@ -219,7 +225,7 @@ class ItemController extends Controller
     }
 
     /**
-     * Export data barang sebagai file Pdf
+     * Export data barang sebagai file Pdf.
      *
      * @return \Barryvdh\DomPDF\Facade\Pdf
      */
@@ -232,7 +238,7 @@ class ItemController extends Controller
     }
 
     /**
-     * Import data barang dari file excel (.xlsx)
+     * Import data barang dari file excel (.xlsx).
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse;

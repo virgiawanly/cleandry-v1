@@ -21,7 +21,7 @@ class CreateLogsTable extends Migration
         });
 
         DB::unprepared(
-            'CREATE TRIGGER `LOG INSERT PICKUP`
+            'CREATE TRIGGER `LOG_INSERT_PICKUP`
                 AFTER INSERT ON `pickups` FOR EACH ROW
                 BEGIN
                     INSERT INTO `logs` (`action`, `datetime`) VALUES("INSERT PICKUP", NOW());
@@ -29,7 +29,7 @@ class CreateLogsTable extends Migration
         );
 
         DB::unprepared(
-            'CREATE TRIGGER `LOG UPDATE PICKUP`
+            'CREATE TRIGGER `LOG_UPDATE_PICKUP`
                 AFTER UPDATE ON `pickups` FOR EACH ROW
                 BEGIN
                     INSERT INTO `logs` (`action`, `datetime`) VALUES("UPDATE PICKUP", NOW());
@@ -37,7 +37,7 @@ class CreateLogsTable extends Migration
         );
 
         DB::unprepared(
-            'CREATE TRIGGER `LOG DELETE PICKUP`
+            'CREATE TRIGGER `LOG_DELETE_PICKUP`
                 BEFORE DELETE ON `pickups` FOR EACH ROW
                 BEGIN
                     INSERT INTO `logs` (`action`, `datetime`) VALUES("DELETE PICKUP", NOW());
@@ -53,8 +53,8 @@ class CreateLogsTable extends Migration
     public function down()
     {
         Schema::dropIfExists('logs');
-        DB::unprepared('DROP TRIGGER IF EXISTS `LOG INSERT PICKUP`');
-        DB::unprepared('DROP TRIGGER IF EXISTS `LOG UPDATE PICKUP`');
-        DB::unprepared('DROP TRIGGER IF EXISTS `LOG DELETE PICKUP`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `LOG_INSERT_PICKUP`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `LOG_UPDATE_PICKUP`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `LOG_DELETE_PICKUP`');
     }
 }
